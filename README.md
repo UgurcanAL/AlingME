@@ -1,6 +1,6 @@
 # AlingME Login Application
 
-A modern web application featuring a TARDIS-themed user interface with secure authentication and profile management.
+A modern web application featuring a TARDIS-themed user interface with secure authentication and profile management. It is too much vibe-coding based and I am lazy to give order to be honest. sorry not sorry.
 
 ## Setup
 
