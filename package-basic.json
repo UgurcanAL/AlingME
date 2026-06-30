@@ -1,0 +1,13 @@
+{
+  "name": "alignme-basic",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "express-server.js",
+  "scripts": {
+    "start": "node express-server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "ejs": "^3.1.10"
+  }
+}

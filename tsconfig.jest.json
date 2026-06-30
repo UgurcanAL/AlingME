@@ -1,0 +1,23 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "noEmit": true,
+    "allowJs": true,
+    "checkJs": false,
+    "isolatedModules": true,
+    "types": ["node", "jest"]
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.js",
+    "src/tests/**/*.ts",
+    "src/tests/**/*.js"
+  ],
+  "exclude": [
+    "dist",
+    "node_modules"
+  ]
+}

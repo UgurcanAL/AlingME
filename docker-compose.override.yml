@@ -1,0 +1,77 @@
+# AlignME Docker Compose Override for Development
+# Additional development-specific configurations
+version: '3.8'
+
+services:
+  app:
+    build:
+      target: development
+    environment:
+      - NODE_ENV=development
+      - LOG_LEVEL=debug
+      - ENABLE_DEBUG=true
+    volumes:
+      - .:/app:cached
+      - /app/node_modules
+      - ./logs:/app/logs
+    command: ["npm", "run", "dev"]
+    stdin_open: true
+    tty: true
+
+  # Hot-reload file watcher service
+  watcher:
+    image: node:18-alpine
+    container_name: alignme-watcher
+    working_dir: /app
+    volumes:
+      - .:/app:cached
+    command: ["npm", "run", "dev:watch"]
+    profiles:
+      - dev-tools
+
+  # Test runner service
+  test-runner:
+    image: node:18-alpine
+    container_name: alignme-test-runner
+    working_dir: /app
+    volumes:
+      - .:/app:cached
+      - /app/node_modules
+    environment:
+      - NODE_ENV=test
+      - DB_HOST=postgres-test
+      - DB_PORT=5432
+      - DB_NAME=alignme_test
+      - DB_USER=alignme
+      - DB_PASSWORD=alignme123
+      - REDIS_HOST=redis-test
+      - REDIS_PORT=6379
+    command: ["npm", "run", "test:watch"]
+    profiles:
+      - testing
+
+  # Test database
+  postgres-test:
+    image: postgres:15-alpine
+    container_name: alignme-postgres-test
+    environment:
+      - POSTGRES_DB=alignme_test
+      - POSTGRES_USER=alignme
+      - POSTGRES_PASSWORD=alignme123
+    tmpfs:
+      - /var/lib/postgresql/data
+    networks:
+      - alignme-network
+    profiles:
+      - testing
+
+  # Test Redis
+  redis-test:
+    image: redis:7-alpine
+    container_name: alignme-redis-test
+    tmpfs:
+      - /data
+    networks:
+      - alignme-network
+    profiles:
+      - testing

@@ -1,0 +1,214 @@
+# AlignME Performance Optimization Configuration
+# Redis caching, database optimization, CDN integration
+
+version: '3.8'
+
+services:
+  # =============================================================================
+  # REDIS CLUSTER FOR CACHING
+  # =============================================================================
+  redis-master:
+    image: redis:7-alpine
+    container_name: alignme-redis-master
+    command: redis-server --appendonly yes --replica-read-only no
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis-master-data:/data
+      - ./config/redis.conf:/usr/local/etc/redis/redis.conf
+    environment:
+      - REDIS_REPLICATION_MODE=master
+    networks:
+      - alignme-network
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 256M
+
+  redis-replica:
+    image: redis:7-alpine
+    container_name: alignme-redis-replica
+    command: redis-server --slaveof redis-master 6379 --replica-read-only yes
+    depends_on:
+      - redis-master
+    volumes:
+      - redis-replica-data:/data
+    environment:
+      - REDIS_REPLICATION_MODE=slave
+    networks:
+      - alignme-network
+    deploy:
+      replicas: 2
+      resources:
+        limits:
+          memory: 256M
+
+  # =============================================================================
+  # NGINX REVERSE PROXY WITH CACHING
+  # =============================================================================
+  nginx:
+    image: nginx:alpine
+    container_name: alignme-nginx
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - ./config/nginx.conf:/etc/nginx/nginx.conf
+      - ./config/nginx-cache.conf:/etc/nginx/conf.d/cache.conf
+      - ./ssl:/etc/nginx/ssl
+      - nginx-cache:/var/cache/nginx
+    depends_on:
+      - app
+    networks:
+      - alignme-network
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+
+  # =============================================================================
+  # APPLICATION WITH PERFORMANCE OPTIMIZATIONS
+  # =============================================================================
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.production
+      args:
+        - NODE_ENV=production
+        - ENABLE_OPTIMIZATIONS=true
+    container_name: alignme-app
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - REDIS_HOST=redis-master
+      - REDIS_PORT=6379
+      - REDIS_REPLICA_HOST=redis-replica
+      - CACHE_TTL=300
+      - ENABLE_COMPRESSION=true
+      - ENABLE_HTTP2=true
+      - MAX_MEMORY=1024m
+    volumes:
+      - ./uploads:/app/uploads
+      - ./logs:/app/logs
+    depends_on:
+      - redis-master
+      - postgres
+    networks:
+      - alignme-network
+    deploy:
+      replicas: 3
+      resources:
+        limits:
+          memory: 1G
+          cpus: '0.5'
+        reservations:
+          memory: 512M
+          cpus: '0.25'
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+
+  # =============================================================================
+  # OPTIMIZED POSTGRESQL WITH CONNECTION POOLING
+  # =============================================================================
+  postgres:
+    image: postgres:15-alpine
+    container_name: alignme-postgres
+    environment:
+      POSTGRES_DB: alignme
+      POSTGRES_USER: alignme
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_INITDB_ARGS: '--encoding=UTF-8 --lc-collate=C --lc-ctype=C'
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./config/postgresql.conf:/etc/postgresql/postgresql.conf
+      - ./config/pg_hba.conf:/etc/postgresql/pg_hba.conf
+    command: postgres -c config_file=/etc/postgresql/postgresql.conf
+    ports:
+      - '5432:5432'
+    networks:
+      - alignme-network
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+          cpus: '1.0'
+        reservations:
+          memory: 1G
+          cpus: '0.5'
+
+  # =============================================================================
+  # PGBOUNCER FOR CONNECTION POOLING
+  # =============================================================================
+  pgbouncer:
+    image: pgbouncer/pgbouncer:latest
+    container_name: alignme-pgbouncer
+    environment:
+      DATABASES_HOST: postgres
+      DATABASES_PORT: 5432
+      DATABASES_USER: alignme
+      DATABASES_PASSWORD: ${DB_PASSWORD}
+      DATABASES_DBNAME: alignme
+      POOL_MODE: transaction
+      MAX_CLIENT_CONN: 1000
+      DEFAULT_POOL_SIZE: 100
+      MAX_DB_CONNECTIONS: 100
+    ports:
+      - '6432:5432'
+    depends_on:
+      - postgres
+    volumes:
+      - ./config/pgbouncer.ini:/etc/pgbouncer/pgbouncer.ini
+    networks:
+      - alignme-network
+
+  # =============================================================================
+  # MONITORING AND METRICS
+  # =============================================================================
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: alignme-prometheus
+    ports:
+      - '9090:9090'
+    volumes:
+      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+    networks:
+      - alignme-network
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: alignme-grafana
+    ports:
+      - '3001:3000'
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./config/grafana/dashboards:/etc/grafana/provisioning/dashboards
+      - ./config/grafana/datasources:/etc/grafana/provisioning/datasources
+    depends_on:
+      - prometheus
+    networks:
+      - alignme-network
+
+volumes:
+  postgres-data:
+  redis-master-data:
+  redis-replica-data:
+  nginx-cache:
+  prometheus-data:
+  grafana-data:
+
+networks:
+  alignme-network:
+    driver: bridge

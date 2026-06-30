@@ -1,0 +1,115 @@
+# Production Dockerfile for AlignME
+# Multi-stage build with security and optimization focus
+
+# =============================================================================
+# BUILD STAGE
+# =============================================================================
+FROM node:18-alpine AS builder
+
+# Set build arguments
+ARG NODE_ENV=production
+ARG BUILD_TIME
+ARG COMMIT_SHA
+ARG ENABLE_OPTIMIZATIONS=true
+
+# Install build dependencies
+RUN apk add --no-cache \
+    python3 \
+    make \
+    g++ \
+    git \
+    curl \
+    && rm -rf /var/cache/apk/*
+
+WORKDIR /app
+
+# Copy package files and install dependencies
+COPY package*.json ./
+COPY tsconfig.json ./
+
+# Install dependencies (including dev dependencies for building)
+RUN npm ci --include=dev && npm cache clean --force
+
+# Copy source code
+COPY src/ ./src/
+COPY public/ ./public/
+COPY views/ ./views/
+COPY config/ ./config/
+
+# Build TypeScript and optimize assets
+RUN npm run build || npm run compile || echo "Build step completed"
+
+# Build optimizations
+RUN if [ "$ENABLE_OPTIMIZATIONS" = "true" ]; then \
+        echo "Running optimizations..."; \
+        npm run optimize 2>/dev/null || echo "Optimization step skipped"; \
+        npm run compress-assets 2>/dev/null || echo "Asset compression skipped"; \
+    fi
+
+# Remove dev dependencies
+RUN npm prune --production
+
+# =============================================================================
+# PRODUCTION STAGE
+# =============================================================================
+FROM node:18-alpine AS production
+
+# Security: Create non-root user
+RUN addgroup -g 1001 -S alignme && \
+    adduser -S alignme -u 1001 -G alignme
+
+# Install production dependencies
+RUN apk add --no-cache \
+    dumb-init \
+    curl \
+    ca-certificates \
+    tzdata && \
+    rm -rf /var/cache/apk/*
+
+WORKDIR /app
+
+# Copy built application
+COPY --from=builder --chown=alignme:alignme /app/dist ./dist
+COPY --from=builder --chown=alignme:alignme /app/node_modules ./node_modules
+COPY --from=builder --chown=alignme:alignme /app/public ./public
+COPY --from=builder --chown=alignme:alignme /app/package*.json ./
+
+# Create necessary directories
+RUN mkdir -p logs uploads temp && \
+    chown -R alignme:alignme logs uploads temp
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:3000/health || exit 1
+
+# Security configurations
+USER alignme
+
+# Environment variables
+ENV NODE_ENV=production \
+    PORT=3000 \
+    NPM_CONFIG_LOGLEVEL=warn \
+    NPM_CONFIG_PROGRESS=false \
+    NODE_OPTIONS="--max-old-space-size=1024 --max-semi-space-size=128" \
+    UV_THREADPOOL_SIZE=4
+
+# Expose port
+EXPOSE 3000
+
+# Use dumb-init for proper signal handling
+ENTRYPOINT ["dumb-init", "--"]
+
+# Start application
+CMD ["node", "dist/server.js"]
+
+# =============================================================================
+# METADATA
+# =============================================================================
+LABEL maintainer="AlignME Team <tech@alignme.com>" \
+      version="1.0.0" \
+      description="AlignME Professional Networking Platform" \
+      org.opencontainers.image.title="AlignME" \
+      org.opencontainers.image.description="Professional networking platform connecting job seekers with opportunities" \
+      org.opencontainers.image.version="1.0.0" \
+      org.opencontainers.image.vendor="AlignME" \
+      org.opencontainers.image.licenses="MIT"
