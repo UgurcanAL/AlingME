@@ -1,0 +1,14 @@
+{
+  "name": "pusula-pilot",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Pusula Radar kapali beta pilotu - odul koltuk tarama, uyari ve pilot kapi metrikleri",
+  "type": "module",
+  "engines": { "node": ">=22.5.0" },
+  "scripts": {
+    "start": "node --no-warnings src/index.js",
+    "seed": "node --no-warnings scripts/seed.js",
+    "report": "node --no-warnings scripts/report.js",
+    "test": "node --no-warnings --test test/*.test.js"
+  }
+}
