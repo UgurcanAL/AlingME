@@ -413,6 +413,12 @@
     .masthead { padding: 40px 0 32px; }
     .abstract { padding: 20px 20px; }
   }
+  @media print {
+    .table-wrap, .stats-wrap { overflow: visible; }
+    table.divergence { min-width: 0; width: 100%; font-size: 11px; }
+    table.divergence td.topic { min-width: 0; }
+    table.divergence tr { break-inside: avoid; }
+  }
 </style>
 
 <div class="page">
