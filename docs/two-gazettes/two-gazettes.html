@@ -1,0 +1,737 @@
+<title>Two Gazettes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@500;600;700&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg: #F6F4EE;
+    --surface: #FFFFFE;
+    --surface-sunken: #EFEBE0;
+    --ink: #1E2430;
+    --ink-soft: #4A5163;
+    --ink-faint: #7A8092;
+    --rule: #DCD6C7;
+    --rule-strong: #B9B196;
+    --eu: #33517F;
+    --eu-soft: #E7ECF4;
+    --tr: #93362B;
+    --tr-soft: #F5E7E3;
+    --pending: #8A5A12;
+    --pending-soft: #F3E7D2;
+    --match: #396647;
+    --match-soft: #E4EEE5;
+    --shadow: 0 1px 2px rgba(30,36,48,0.06), 0 8px 24px -12px rgba(30,36,48,0.14);
+    --radius: 3px;
+    --serif: "Spectral", Georgia, "Times New Roman", serif;
+    --sans: "Public Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #14161D;
+      --surface: #1B1E27;
+      --surface-sunken: #10121A;
+      --ink: #E9E6DC;
+      --ink-soft: #ADB2C0;
+      --ink-faint: #767C8E;
+      --rule: #2C3040;
+      --rule-strong: #3D4256;
+      --eu: #8CA6D6;
+      --eu-soft: #202B42;
+      --tr: #E0958A;
+      --tr-soft: #3A2420;
+      --pending: #E3B564;
+      --pending-soft: #3A2E15;
+      --match: #8FCBA1;
+      --match-soft: #1E3327;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #14161D;
+    --surface: #1B1E27;
+    --surface-sunken: #10121A;
+    --ink: #E9E6DC;
+    --ink-soft: #ADB2C0;
+    --ink-faint: #767C8E;
+    --rule: #2C3040;
+    --rule-strong: #3D4256;
+    --eu: #8CA6D6;
+    --eu-soft: #202B42;
+    --tr: #E0958A;
+    --tr-soft: #3A2420;
+    --pending: #E3B564;
+    --pending-soft: #3A2E15;
+    --match: #8FCBA1;
+    --match-soft: #1E3327;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 16.5px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 0 24px 96px;
+  }
+
+  a { color: var(--eu); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+  a:hover { text-decoration-thickness: 2px; }
+  a:focus-visible, button:focus-visible, summary:focus-visible {
+    outline: 2px solid var(--eu);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  /* ---------- Masthead ---------- */
+
+  .masthead {
+    padding: 56px 0 40px;
+    border-bottom: 1px solid var(--rule-strong);
+  }
+
+  .masthead__kicker {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 22px;
+  }
+
+  .masthead__kicker .instrument {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 8px;
+    border-radius: var(--radius);
+  }
+  .masthead__kicker .instrument.eu { background: var(--eu-soft); color: var(--eu); }
+  .masthead__kicker .instrument.tr { background: var(--tr-soft); color: var(--tr); }
+  .masthead__kicker .sep { color: var(--rule-strong); }
+
+  h1.title {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: clamp(2.1rem, 4.2vw, 3rem);
+    line-height: 1.12;
+    letter-spacing: -0.01em;
+    margin: 0 0 14px;
+    text-wrap: balance;
+    color: var(--ink);
+  }
+
+  .subtitle {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 1.18rem;
+    color: var(--ink-soft);
+    margin: 0 0 30px;
+    max-width: 46ch;
+  }
+
+  .byline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 22px;
+    font-size: 13.5px;
+    color: var(--ink-faint);
+    font-family: var(--mono);
+  }
+  .byline strong { color: var(--ink-soft); font-weight: 500; }
+
+  /* ---------- Abstract panel ---------- */
+
+  .abstract {
+    margin: 40px 0 8px;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--ink);
+    border-radius: var(--radius);
+    padding: 26px 30px;
+    box-shadow: var(--shadow);
+  }
+  .abstract__label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 12px;
+  }
+  .abstract p {
+    margin: 0;
+    font-size: 15.5px;
+    line-height: 1.7;
+    color: var(--ink-soft);
+    max-width: 74ch;
+  }
+
+  /* ---------- Table of contents ---------- */
+
+  .toc {
+    margin: 40px 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px 32px;
+  }
+  .toc__title {
+    grid-column: 1 / -1;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 8px;
+  }
+  .toc a {
+    display: flex;
+    gap: 10px;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--rule);
+    color: var(--ink-soft);
+    font-size: 14.5px;
+    text-decoration: none;
+  }
+  .toc a:hover { color: var(--ink); }
+  .toc a .n {
+    font-family: var(--mono);
+    color: var(--ink-faint);
+    min-width: 1.4em;
+  }
+
+  @media (max-width: 640px) {
+    .toc { grid-template-columns: 1fr; }
+  }
+
+  /* ---------- Sections ---------- */
+
+  section.chapter {
+    padding-top: 64px;
+    border-top: 1px solid var(--rule);
+    margin-top: 0;
+  }
+  section.chapter:first-of-type { border-top: none; }
+
+  .chapter__head {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 22px;
+  }
+  .chapter__num {
+    font-family: var(--mono);
+    font-size: 15px;
+    color: var(--ink-faint);
+    letter-spacing: 0.02em;
+  }
+  h2.chapter__title {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: 1.68rem;
+    line-height: 1.25;
+    margin: 0;
+    text-wrap: balance;
+    color: var(--ink);
+  }
+
+  h3.sub {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: 1.14rem;
+    margin: 34px 0 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  h3.sub .tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    padding: 2px 8px;
+    border-radius: var(--radius);
+    font-weight: 500;
+  }
+  h3.sub .tag.eu { background: var(--eu-soft); color: var(--eu); }
+  h3.sub .tag.tr { background: var(--tr-soft); color: var(--tr); }
+
+  .prose { max-width: 70ch; }
+  .prose p {
+    margin: 0 0 18px;
+    font-size: 16px;
+    line-height: 1.72;
+  }
+  .prose p:last-child { margin-bottom: 0; }
+
+  .prose em { color: var(--ink); }
+  .prose strong { font-weight: 600; }
+
+  cite, .cite {
+    font-style: normal;
+    font-family: var(--mono);
+    font-size: 0.86em;
+    color: var(--ink-faint);
+  }
+
+  .note {
+    font-size: 14px;
+    color: var(--ink-faint);
+    border-left: 2px solid var(--rule-strong);
+    padding-left: 14px;
+    margin: 22px 0;
+    max-width: 66ch;
+  }
+
+  /* ---------- Divergence table ---------- */
+
+  .table-wrap {
+    margin: 28px 0 8px;
+    overflow-x: auto;
+    border: 1px solid var(--rule-strong);
+    border-radius: var(--radius);
+    background: var(--surface);
+    box-shadow: var(--shadow);
+  }
+
+  table.divergence {
+    border-collapse: collapse;
+    width: 100%;
+    min-width: 980px;
+    font-size: 13.5px;
+  }
+
+  table.divergence th {
+    text-align: left;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    background: var(--surface-sunken);
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--rule-strong);
+    position: sticky;
+    top: 0;
+  }
+
+  table.divergence td {
+    padding: 14px 14px;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: top;
+    line-height: 1.55;
+  }
+  table.divergence tr:last-child td { border-bottom: none; }
+
+  table.divergence td.num {
+    font-family: var(--mono);
+    font-variant-numeric: tabular-nums;
+    color: var(--ink-faint);
+    width: 2.4em;
+  }
+  table.divergence td.topic { font-weight: 600; min-width: 15ch; }
+  table.divergence td.eu-cell { border-left: 2px solid var(--eu-soft); }
+  table.divergence td.tr-cell { border-left: 2px solid var(--tr-soft); }
+
+  .flag {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 1px 6px;
+    border-radius: var(--radius);
+    margin-right: 6px;
+    vertical-align: 1px;
+  }
+  .flag.pending { background: var(--pending-soft); color: var(--pending); }
+  .flag.match { background: var(--match-soft); color: var(--match); }
+  .flag.kanun { background: var(--tr-soft); color: var(--tr); }
+  .flag.lit { background: var(--eu-soft); color: var(--eu); }
+  .flag.rg { background: var(--match-soft); color: var(--match); }
+
+  table.stats { border-collapse: collapse; font-size: 14px; margin: 20px 0 6px; min-width: 420px; }
+  table.stats th, table.stats td { padding: 6px 12px; border-bottom: 1px solid var(--rule); text-align: right; font-variant-numeric: tabular-nums; }
+  table.stats th { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-faint); background: var(--surface-sunken); }
+  table.stats td:first-child, table.stats th:first-child { text-align: left; }
+  .stats-wrap { overflow-x: auto; max-width: 100%; }
+
+  /* ---------- References ---------- */
+
+  .refs { max-width: 74ch; }
+  .refs .ref {
+    font-size: 14.5px;
+    line-height: 1.65;
+    color: var(--ink-soft);
+    padding: 14px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  .refs .ref:last-child { border-bottom: none; }
+  .refs .ref em { font-style: italic; color: var(--ink); }
+  .refs .ref a { word-break: break-word; }
+  .refs .ref .pending-note {
+    display: inline-block;
+    margin-top: 4px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--pending);
+  }
+
+  /* ---------- Footer ---------- */
+
+  .colophon {
+    margin-top: 80px;
+    padding-top: 24px;
+    border-top: 1px solid var(--rule);
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink-faint);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  @media (max-width: 560px) {
+    .page { padding: 0 16px 72px; }
+    .masthead { padding: 40px 0 32px; }
+    .abstract { padding: 20px 20px; }
+  }
+  @media print {
+    .table-wrap, .stats-wrap { overflow: visible; }
+    table.divergence { min-width: 0; width: 100%; font-size: 11px; }
+    table.divergence td.topic { min-width: 0; }
+    table.divergence tr { break-inside: avoid; }
+  }
+</style>
+
+<div class="page">
+
+  <header class="masthead">
+    <div class="masthead__kicker">
+      <span class="instrument eu">Directive 2010/63/EU</span>
+      <span class="sep">&times;</span>
+      <span class="instrument tr">5199 &amp; HADYEK</span>
+    </div>
+    <h1 class="title">Two Gazettes</h1>
+    <p class="subtitle">Comparing the EU's Official Journal and Türkiye's Resmî Gazete on the protection of animals used for scientific purposes, article by madde.</p>
+    <div class="byline">
+      <span><strong>Format</strong> Comparative regulatory analysis</span>
+      <span><strong>Citation</strong> APA 7th</span>
+      <span><strong>Audience</strong> Regulatory affairs &amp; research compliance</span>
+    </div>
+
+    <div class="abstract">
+      <div class="abstract__label">Abstract</div>
+      <p>This paper compares Directive 2010/63/EU with Türkiye's framework for animals used for scientific purposes: 5199 sayılı Hayvanları Koruma Kanunu, the 2011 welfare regulation (Deneysel ve Diğer Bilimsel Amaçlar İçin Kullanılan Hayvanların Refah ve Korunmasına Dair Yönetmelik), the 2014 regulation governing the central (HADMEK) and local (HADYEK) animal-experiment ethics committees, and the 2019 aquatic-vertebrate regulation. Read against the original Resmî Gazete texts, Turkish law transposes the Directive with unusual fidelity. That holds for its substantive standards (scope, definitions, the 3Rs, severity classification, competence) and for much of its institutional machinery: a harm-benefit test with named reviewer expertise, the 40-working-day decision clock, non-technical project summaries, retrospective assessment, and a risk-based inspection floor of one-third of establishments a year with at least half of inspections unannounced. The divergences that remain are narrower. Project evaluation and authorisation both sit with committees inside the user institution. The severe-pain exception is a local committee's decision, not a Commission-notified state measure. The aquatic regulation, which covers the largest group of animals used, omits the one-third inspection floor. Publication of non-technical summaries depends on a database the Ministry is not obliged to create, while three provisions restrict public disclosure. And the regime is more veterinarian-centred than the Directive. Above all, compliance cannot be verified from public sources: the only published inspection record shows 33 central-committee inspections in 2008&ndash;2015, and national statistics stop at 2020. The paper argues that due diligence on a Turkish facility therefore still turns on sponsor-audit and accreditation evidence. The law is not thin; its performance is unobservable.</p>
+    </div>
+
+    <nav class="toc" aria-label="Table of contents">
+      <div class="toc__title">Contents</div>
+      <a href="#s1"><span class="n">1</span> Why the comparison matters</a>
+      <a href="#s2"><span class="n">2</span> Scope and definitions</a>
+      <a href="#table1"><span class="n">&mdash;</span> Table 1: divergences and matches</a>
+      <a href="#s3"><span class="n">3</span> Authorisation and project evaluation</a>
+      <a href="#s4"><span class="n">4</span> Severity classification and the 3Rs</a>
+      <a href="#s5"><span class="n">5</span> Personnel competence</a>
+      <a href="#s6"><span class="n">6</span> Inspection, enforcement, reporting</a>
+      <a href="#s7"><span class="n">7</span> Divergence &amp; practical consequence</a>
+      <a href="#s8"><span class="n">8</span> Open questions &amp; direction of travel</a>
+    </nav>
+  </header>
+
+  <main>
+
+    <section class="chapter" id="s1">
+      <div class="chapter__head"><span class="chapter__num">01</span><h2 class="chapter__title">Why the Comparison Matters</h2></div>
+      <div class="prose">
+        <p>Türkiye's framework for laboratory animal use was built to match Directive 2010/63/EU, and on paper it largely does. The divergence that matters is less in what the rules say than in whether anyone outside a facility can see them being followed. The practical consequence is that assurance about a Turkish facility comes more from sponsor and accreditation evidence than from the public regulatory record. This is not merely academic. It determines whether data generated in a Turkish facility will be accepted without qualification by a European or American regulator, whether a multinational sponsor can rely on local ethics approval as a substitute for its own audit, and whether a Turkish researcher's training is portable across borders.</p>
+        <p>Directive 2010/63/EU falls within accession Chapter 12 (Food Safety, Veterinary and Phytosanitary Policy), screened in 2006&ndash;2007 and opened for negotiation in 2010 <cite>(European Commission, 2007)</cite>. Accession negotiations have been effectively stalled since 2018, with no chapter opened or closed since; and yet legal and operational alignment with the Directive persists regardless, sustained by the commercial and institutional channels described below rather than by accession leverage.</p>
+        <p>The more immediate driver is commercial and institutional. Multinational sponsors conducting or outsourcing preclinical work expect data defensible under the standards their own regulators apply, regardless of where the work was performed; a Turkish facility working with such sponsors typically absorbs EU- or GLP-equivalent expectations contractually, not because domestic law requires it. International benchmarks reinforce this asymmetry unevenly. AAALAC International accreditation exists in Türkiye but appears limited: its own accreditation directory lists a single Turkish institution, the Acıbadem Mehmet Ali Aydınlar University Laboratory Animal Application and Research Center <cite>(AAALAC International, n.d., directory accessed August 26, 2026)</cite>. FELASA's own education and training guidance shows no systemic pathway linking HADYEK-issued competence certification to FELASA function categories; delivery in Türkiye has instead been ad hoc, exemplified by a 2013 joint course between Utrecht University and Dokuz Eylül University <cite>(FELASA, n.d., accessed August 26, 2026)</cite>. The result is a compliance landscape shaped less by statute than by which sponsors, accreditors, and export markets a given facility answers to. This is the argument the paper develops through Sections 3 to 7.</p>
+        <p>The closest earlier comparison, Gölcü and Aksoy's overview of EU and Turkish laboratory-animal legislation, reached a compatible conclusion from the text alone: parts of both the welfare yönetmelik and the ethics-committee yönetmelik were &ldquo;translated almost word for word&rdquo; from the Directive, and without adaptation to Türkiye's own conditions and wider legal framework they may not give animals an adequate basis of protection <cite>(Gölcü &amp; Aksoy, 2017)</cite>. That overview described the instruments section by section. This paper adds an article-by-madde comparison, a full reading of Law No. 5199, and a check of each Turkish provision against the original Resmî Gazete texts.</p>
+      </div>
+    </section>
+
+    <section class="chapter" id="s2">
+      <div class="chapter__head"><span class="chapter__num">02</span><h2 class="chapter__title">Scope and Definitions</h2></div>
+
+      <h3 class="sub"><span class="tag eu">EU</span> The EU Position</h3>
+      <div class="prose">
+        <p>Directive 2010/63/EU applies &ldquo;where animals are used or intended to be used in procedures, or bred specifically so that their organs or tissues may be used for scientific purposes&rdquo; <cite>(Directive 2010/63/EU, art 1(2))</cite>. The animals covered are defined narrowly but not exclusively by taxonomy: live non-human vertebrates, including independently feeding larval forms and foetal forms of mammals from the last third of their normal development, plus live cephalopods <cite>(art 1(3))</cite>. The inclusion of cephalopods, a class of roughly 700 invertebrate species, was a deliberate extension beyond the Directive's predecessor and the first time an entire invertebrate class entered laboratory-animal legislation across the EU <cite>(Fiorito et al., 2015)</cite>; no comparable extension to any other invertebrate taxon was made.</p>
+        <p>The Directive does not define its scope by species alone but by the procedure performed. A &ldquo;procedure&rdquo; is &ldquo;any use, invasive or non-invasive, of an animal for experimental or other scientific purposes, with known or unknown outcome, or educational purposes, which may cause the animal a level of pain, suffering, distress or lasting harm equivalent to, or higher than, that caused by the introduction of a needle in accordance with good veterinary practice&rdquo; <cite>(art 3(1))</cite>. This is a comparator standard, not a fixed severity floor: it draws the line between what is regulated at all and what falls outside the Directive entirely, prior to any severity classification under Article 15 (addressed in Section 4).</p>
+        <p>Article 1(5) excludes six categories from scope regardless of species: non-experimental agricultural practices; non-experimental clinical veterinary practices; veterinary clinical trials conducted for the marketing authorisation of a veterinary medicinal product; practices undertaken for recognised animal husbandry purposes; practices whose primary purpose is animal identification; and any practice that does not meet the needle-prick threshold above <cite>(art 1(5)(a)&ndash;(f))</cite>.</p>
+        <p>The killing-for-tissue case is handled by a specific carve-out rather than silence. Breeding an animal specifically so its organs or tissues can be used for scientific purposes brings that animal within the Directive's scope under Article 1(2), meaning breeding establishments, care standards, and record-keeping obligations apply. But the act of killing itself is expressly excluded from the definition of &ldquo;procedure&rdquo; <cite>(art 3(1), final clause)</cite>. Killing is nonetheless not unregulated: Article 6 requires that animals be killed with minimum pain, suffering and distress, in an authorised establishment, by a competent person, using a method appropriate to the species as set out in Annex IV <cite>(art 6(1)&ndash;(3))</cite>. The result is a two-track structure: killing-for-tissue escapes project authorisation and severity classification as a &ldquo;procedure,&rdquo; but does not escape the Directive's welfare and competence requirements entirely.</p>
+      </div>
+
+      <h3 class="sub"><span class="tag tr">TR</span> The Turkish Position</h3>
+      <div class="prose">
+        <p>The welfare yönetmelik (RG 13.12.2011, No. 28141) rests on three statutes: Law No. 5996 on veterinary services, food and feed (arts 7, 8, 9, 11, 25, 31, 36 and 43), Law No. 5199 (arts 9 and 10), and Law No. 5977 on biosafety. It states that it was prepared &ldquo;in parallel with&rdquo; the Directive <cite>(madde 3)</cite>. Its scope and definitions provisions track Directive 2010/63/EU closely enough that they read as a direct transposition rather than an independent drafting effort. Madde 2(1)(c) brings within scope &ldquo;insan-dışı canlı omurgalılar&rdquo; (live non-human vertebrates), independently feeding larval forms, and mammalian foetuses that have passed the first two-thirds of gestation (i.e., are in the final third of normal development), together with live cephalopods, matching Directive art 1(3) point for point, cephalopod inclusion and developmental threshold both intact. Madde 2(1)(ç) extends scope to animals at an earlier developmental stage where the animal will be allowed to survive beyond that stage and is liable to suffer as a result after reaching it, the same construction as Directive art 1(4). Madde 2(1)(b) provides that the yönetmelik applies until an animal is killed, rehomed, released to its natural habitat, or returned to a livestock system, and that successful elimination of pain via anaesthesia, analgesia, or other methods does not remove the use from scope, again matching Directive art 1(2).</p>
+        <p>The definitional layer shows the same pattern. Madde 4(s) defines &ldquo;prosedür&rdquo; using language nearly identical to Directive art 3(1): an invasive or non-invasive use of an animal for experimental, other scientific, or educational purposes, with known or unknown outcome, capable of causing pain, suffering, distress, or lasting harm equivalent to or greater than that caused by inserting a needle under good veterinary practice. As in the EU text, it expressly excludes &ldquo;hayvanların yalnızca organları veya dokularını kullanmak için öldürülmesi&rdquo; (killing animals solely to use their organs or tissues). Madde 4(r) defines &ldquo;proje&rdquo; as a work programme containing one or more procedures with a specific scientific purpose, mirroring Directive art 3(2). The exclusions in madde 2(2), non-experimental agricultural and clinical veterinary practice, field trials for veterinary product licensing, obligations of registered livestock enterprises, animal-identification practices, and the needle-prick threshold itself, map onto all six categories in Directive art 1(5)(a)&ndash;(f).</p>
+        <p>Sitting above the yönetmelik, Law No. 5199 carries its own, older definitional layer, and it does not map onto the Directive as neatly. Kanun art 3(l) defines &ldquo;deney&rdquo; as the use of <em>any</em> animal (&ldquo;herhangi bir hayvanın&rdquo;) for experimental or other scientific purposes that will cause pain, suffering, distress or lasting harm (&ldquo;acı, eziyet, üzüntü veya uzun süreli hasara neden olacak&rdquo;), and art 3(m) defines &ldquo;deney hayvanı&rdquo; as any animal used or to be used in an experiment. Three differences from Directive art 3(1) follow from the text: the statutory definition has no taxonomic limit (the Kanun elsewhere defines wild animals to include invertebrates, art 3(h)), it has no needle-prick comparator, and it does not mention educational purposes or &ldquo;known or unknown outcome.&rdquo; The Directive-aligned scope (vertebrates, cephalopods, the developmental thresholds, the needle-prick line) exists only at yönetmelik level. The practical point is narrow but real: the Kanun's own requirements in art 9, scientific purpose only, use only where no other option exists, and ethics-committee authorisation, are written for &ldquo;hayvanlar&rdquo; without a species boundary, so their outer limit is set by the implementing regulation rather than by the statute.</p>
+        <p>The killing-for-tissue case is also handled partly in the Kanun rather than only in the yönetmelik. Art 8(2) prohibits removing or destroying all or part of a living animal's organs or tissues other than for medical purposes; art 14(1)(e) prohibits any non-therapeutic intervention on an animal's body before its death has been definitively confirmed; and art 13(4) makes the persons and bodies responsible for killing liable for confirming death and for proper disposal of the carcass, with killing and euthanasia methods delegated to a Ministry yönetmelik. Art 13(3) bars killing animals during birth, pregnancy and lactation, but expressly excepts &ldquo;tıbbî ve bilimsel gerekçeler&rdquo; (medical and scientific grounds). The art 8(2), art 14(1)(e) and art 13(4) rules each carry their own per-animal fine (art 28(d), (j), (ı) respectively), and for art 13(4) the fine rises from 2,200 to 5,500 TRY per animal where the breach is committed by an establishment (&ldquo;işletmelerce&rdquo;). The Turkish system therefore reproduces the EU's two-track structure, with killing outside the &ldquo;procedure&rdquo; definition but still regulated, and anchors part of the second track in primary legislation.</p>
+        <p>The practical implication is that scope and definitions are not where this comparison finds daylight. A hiring manager evaluating a Turkish facility's compliance posture should not expect ambiguity here: what counts as a regulated animal, a regulated procedure, or an excluded practice is essentially the same question with the same answer under both regimes. Where the regimes do part is set out from Section 3 onward.</p>
+        <p>One structural feature of the Turkish scope has no EU counterpart. Since 2019, aquatic vertebrates have been carved out into a separate instrument, the Bilimsel Amaçlar İçin Kullanılan Sucul Omurgalı Canlıların Refah ve Korunmasına Dair Yönetmelik (RG 20.04.2019, No. 30751; amended 23 December 2022 and 27 April 2024). It covers fish, amphibians and aquatic reptiles (cetaceans excepted), cyclostomes and cephalopods <cite>(madde 2, 4)</cite>, and, since its amendments, runs its own establishment permits and its own central and local ethics committees under the Ministry's Directorate-General of Fisheries and Aquaculture <cite>(Demirel &amp; Uluköy, 2025, pp. 116&ndash;117)</cite>. The Directive-matching scope described above is therefore split across two Turkish regulations, not one, and the Turkish home of cephalopod protection is the aquatic instrument. This matters in practice because fish were the largest single group of animals used in Türkiye in 2020, at 37% <cite>(Demirel &amp; Uluköy, 2025, p. 121)</cite>.</p>
+      </div>
+    </section>
+
+    <section class="chapter" id="table1">
+      <div class="chapter__head"><h2 class="chapter__title">Table 1. Divergences and Matches</h2></div>
+      <div class="prose">
+        <p>Section 2 produced no rows: scope and definitions (yönetmelik madde 2, madde 4) are a near-verbatim transposition of Directive 2010/63/EU art 1(1)&ndash;(5) and art 3(1)&ndash;(2). Earlier drafts of this table listed the harm-benefit test, the decision timeline and the inspection floor as divergences. A reading of the original regulation texts shows all three are transposed, so those rows are kept and marked <span class="flag match">Converges</span> to record the correction.</p>
+        <p class="note"><span class="flag rg">RG text</span>Checked against the original Resmî Gazete texts of the welfare yönetmelik (No. 28141, 2011), the ethics-committee regulation (No. 28914, 2014) and the aquatic regulation (No. 30751, 2019), then against consolidated texts: the welfare yönetmelik as amended to 8 July 2019, the aquatic regulation as amended to 27 April 2024, and the ethics regulation, which has not been amended. <span class="flag kanun">5199 checked</span>Checked against the consolidated text of Law No. 5199 (mevzuat.gov.tr, retrieved September 28, 2026). <span class="flag lit">Literature checked</span>Draws on the secondary literature and HADMEK reports in the references.</p>
+      </div>
+
+      <div class="table-wrap">
+        <table class="divergence">
+          <thead>
+            <tr>
+              <th>#</th><th>Topic</th><th>EU Position</th><th>Turkish Position</th><th>Practical Consequence</th><th>§</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="num">1</td>
+              <td class="topic">Who evaluates and authorises projects</td>
+              <td class="eu-cell">A designated competent authority. Tasks may go to other bodies only if they have the expertise and are &ldquo;free of any conflict of interests&rdquo; (art 59(1)); evaluation must be impartial (art 38(4)).</td>
+              <td class="tr-cell"><span class="flag rg">RG text</span><span class="flag kanun">5199 checked</span>A committee inside the user institution evaluates <em>and</em> authorises (Kanun art 9(4); ethics regulation madde 8, 15). Its chair and veterinarian must be full-time employees, and all members are appointed by the rector or head. Only two of at least five members must be free of ties to the institution (madde 8(2)&ndash;(4)). HADMEK hears appeals and can suspend committees (madde 7, 21(2)). Aquatic work runs through parallel SOCYEKs. Their chair and facility manager must be employees, all members are appointed by the rector or head, and only one member, from an animal-related NGO, must be free of ties to the institution (aquatic regulation madde 31/C, added 2022).</td>
+              <td>The body that approves a project is part of the institution that wants to run it. Independence rests on two lay members (one on aquatic committees) and on central-committee oversight.</td>
+              <td class="cite">§3</td>
+            </tr>
+            <tr>
+              <td class="num">2</td>
+              <td class="topic">Harm-benefit evaluation criteria</td>
+              <td class="eu-cell">Art 38(1)&ndash;(3): objectives, 3Rs, severity, harm-benefit analysis, retrospective-assessment decision, named reviewer expertise. Applied unevenly across Member States <cite>(Hajosi &amp; Grimm, 2024)</cite>.</td>
+              <td class="tr-cell"><span class="flag match">Converges</span><span class="flag rg">RG text</span>Ethics regulation madde 15(1) lists the same criteria, including &ldquo;the benefit to be gained and the suffering of the animals&rdquo; (15(1)(f)). Madde 15(2) names the reviewer expertise, and 15(3) requires a transparent, impartial evaluation. Local rulebooks do not all repeat it: one read for this paper omits the benefit-versus-suffering test.</td>
+              <td>The standard is written into Turkish law. Whether each committee applies it depends on its own rulebook and practice, which is not publicly reported.</td>
+              <td class="cite">§3</td>
+            </tr>
+            <tr>
+              <td class="num">3</td>
+              <td class="topic">Decision timeline</td>
+              <td class="eu-cell">40 working days, extendable once by 15 (art 41).</td>
+              <td class="tr-cell"><span class="flag match">Converges</span><span class="flag rg">RG text</span>Identical: 40 working days including evaluation, extendable once by up to 15 with reasons given (ethics regulation madde 8(8)(ğ)). Authorisation lasts at most five years (8(8)(e)), as under art 40(3).</td>
+              <td>Applicants have an enforceable clock on paper. Compliance with it is unreported.</td>
+              <td class="cite">§3</td>
+            </tr>
+            <tr>
+              <td class="num">4</td>
+              <td class="topic">Severe/unrelievable-pain exception</td>
+              <td class="eu-cell">Prohibited (art 15(2)) unless a Member State adopts a &ldquo;provisional measure&rdquo; and notifies the Commission and other Member States (art 55(3)&ndash;(4)).</td>
+              <td class="tr-cell"><span class="flag rg">RG text</span>Any local ethics committee may allow it case by case on scientific grounds (welfare yönetmelik madde 22(3); aquatic regulation madde 20(2), unchanged by its amendments). Such projects must undergo retrospective assessment (ethics regulation madde 17(2)). No notification mechanism exists.</td>
+              <td>An internationally visible state decision in the EU is a local committee's call in Türkiye.</td>
+              <td class="cite">§4</td>
+            </tr>
+            <tr>
+              <td class="num">5</td>
+              <td class="topic">Personnel: who may manage, kill and supervise</td>
+              <td class="eu-cell">Competence by demonstrated training (art 23, Annex V). Killing by a &ldquo;competent person&rdquo; (art 6). A designated veterinarian or a &ldquo;suitably qualified expert&rdquo; (art 25).</td>
+              <td class="tr-cell"><span class="flag rg">RG text</span>Looser on training: from 1 January 2013, a facility manager needs two years' experience, or Ek-10 training if they lack it (madde 32(4)). The aquatic regulation exempts doctorate holders at universities from training (madde 29(2)). Stricter on profession: the manager must be a veterinarian (madde 4(ş)), and killing is done by or under a veterinarian (madde 30(1)(b)). Experiments run under the responsible veterinarian's supervision (ethics regulation madde 10(g)).</td>
+              <td>The curriculum (Ek-10) matches Annex V, but competence rests more on professional status and experience than on completing it. Portability to FELASA categories is not automatic.</td>
+              <td class="cite">§5</td>
+            </tr>
+            <tr>
+              <td class="num">6</td>
+              <td class="topic">Inspection floor</td>
+              <td class="eu-cell">Risk-based; at least one-third of users a year; primate facilities yearly; an &ldquo;appropriate proportion&rdquo; unannounced (art 34).</td>
+              <td class="tr-cell"><span class="flag match">Converges</span><span class="flag rg">RG text</span>The welfare yönetmelik matches this and requires at least 50% of inspections to be unannounced (madde 37). <em>But</em> the aquatic regulation drops the one-third floor (madde 32, unchanged by the 2022 and 2024 amendments). The only published count is HADMEK's own: 33 central-committee inspections in 2008&ndash;2015 <cite>(HADMEK, 2015)</cite>.</td>
+              <td>The floor exists in law except for aquatic animals, the largest group used. Whether it is met cannot be checked from public sources.</td>
+              <td class="cite">§6</td>
+            </tr>
+            <tr>
+              <td class="num">7</td>
+              <td class="topic">Penalty structure</td>
+              <td class="eu-cell">&ldquo;Effective, proportionate and dissuasive,&rdquo; notified to the Commission (art 60).</td>
+              <td class="tr-cell"><span class="flag rg">RG text</span><span class="flag kanun">5199 checked</span>Two statutory tracks with fixed schedules. Welfare breaches fall under Law No. 5996 art 36 (welfare yönetmelik madde 39). Its base amounts are low: 100 TRY per animal for failing animals' welfare needs, 1,000 TRY for keeping no records, and 5,000 TRY plus closure for operating without a permit. Permit revocation and confiscation apply too. Ethics-regulation breaches and unauthorised experiments fall under Law No. 5199 art 28: 1,200 or 4,500 TRY per animal (2021 base), escalated for repetition and for veterinary or care staff. Administrative only.</td>
+              <td>Sanctions scale with animal count and repetition, never with facility size. For an internationally linked facility they are a smaller deterrent than losing accreditation.</td>
+              <td class="cite">§6</td>
+            </tr>
+            <tr>
+              <td class="num">8</td>
+              <td class="topic">Reporting and transparency</td>
+              <td class="eu-cell">After Regulation (EU) 2019/1010: summaries published in an open EU database within six months (art 43); annual statistics published in a database (art 54(2)) <cite>(Busquet, 2020)</cite>.</td>
+              <td class="tr-cell"><span class="flag rg">RG text</span><span class="flag lit">Literature checked</span>Summaries are required in every application (ethics regulation madde 8(8)(d), 16). But they are published only &ldquo;if the Ministry creates a database&rdquo; (16(4)), and none was found. The welfare yönetmelik bars public statements about procedures without the responsible person's consent (madde 34(1)); the aquatic regulation repeats this (madde 30), and committee correspondence is confidential (ethics regulation madde 22(1)). HADMEK must publish annual statistics (madde 7(1)(h)); its reports stop at 2020 <cite>(HADMEK, 2021)</cite>.</td>
+              <td>No project-level transparency in practice, and the text leans against it. Aggregate numbers are public but late, and HADMEK calls them unreliable.</td>
+              <td class="cite">§6</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="chapter" id="s3">
+      <div class="chapter__head"><span class="chapter__num">03</span><h2 class="chapter__title">Authorisation and Project Evaluation</h2></div>
+
+      <h3 class="sub"><span class="tag eu">EU</span> The EU Position</h3>
+      <div class="prose">
+        <p>Directive 2010/63/EU separates establishment authorisation from project authorisation, and treats both as the responsibility of a &ldquo;competent authority&rdquo; that each Member State must designate, with discretion to delegate specific tasks, including project authorisation itself, to other bodies <cite>(art 59)</cite>. What does not travel with that delegation, however, is the substance of the evaluation: Article 36 provides that no project may be carried out without a favourable project evaluation, and Article 38 fixes what that evaluation must weigh: the project's objectives, the severity of procedures involved, and, centrally, a harm-benefit analysis assessing &ldquo;whether the harm to the animals in terms of suffering, pain and distress is justified by the expected outcome&hellip; taking into account ethical considerations&rdquo; <cite>(art 38(2)(d))</cite>. Article 38(3) further requires that the evaluation draw on expertise in the scientific field of use, experimental design, the veterinary care of the relevant species, and animal husbandry. The decision itself is time-bound: Article 41 requires that applicants be notified within 40 working days of a complete application, extendable once by up to 15 working days where the project's complexity or multidisciplinary character justifies it.</p>
+        <p>Feeding into this decision, but structurally separate from it, is the animal-welfare body every breeder, supplier, and user establishment must set up under Article 26, which must comprise at minimum the person(s) responsible for animal welfare and care and, for users, a scientific member, with input from the establishment's designated veterinarian. Its Article 27 tasks are advisory: guidance to staff on welfare, acquisition, and 3Rs application. It does not authorise projects; it feeds the establishment's own practice and, indirectly, the information available to whichever body performs the Article 38 evaluation.</p>
+      </div>
+
+      <h3 class="sub"><span class="tag tr">TR</span> The Turkish Position</h3>
+      <div class="prose">
+        <p>Establishment licensing in the welfare yönetmelik runs in two stages. The governor's office (valilik) issues a one-year kuruluş izni after the Komisyon inspects the site; the Komisyon is two expert veterinarians from the provincial veterinary institute plus a veterinarian from the provincial or district directorate. The Ministry's General Directorate then issues a ten-year çalışma izni after a second on-site inspection <cite>(madde 4(k), 11&ndash;12)</cite>. Procedures outside a licensed user establishment need direct Ministry permission. The project leader applies with a project summary, the number and species of animals, and the location <cite>(madde 19)</cite>. Inside a licensed establishment, the local ethics committee holds a set of case-by-case powers. It may allow procedures involving prolonged, unrelievable severe pain <cite>(madde 22(3))</cite>, allow reuse <cite>(madde 23(2))</cite>, and allow Ek-6 species from unlicensed sources on scientific grounds <cite>(madde 14(3))</cite>. It may make exceptions to the ban on wild-caught animals, with the relevant ministry's permission <cite>(madde 17(2))</cite>. Under madde 26(5), it applies the replacement and reduction principles, and refinement except in breeding, care and housing.</p>
+        <p>Structurally, the closest Turkish parallel to the EU's Article 26 animal-welfare body is the hayvan refahı birimi that every producer, supplier, user, and research-authorised institution must establish <cite>(madde 8)</cite>. Its composition mirrors the EU model: at least one veteriner hekim, veteriner sağlık teknikeri, or veteriner sağlık teknisyeni responsible for welfare and care, and, in user establishments, one more member who is also a yerel etik kurul üyesi, up to three in all <cite>(madde 8(2))</cite>. Its tasks <cite>(madde 9)</cite> are advisory in the same register as Article 27: staff guidance on welfare, on 3Rs application, and on monitoring project outcomes for their effects on animals.</p>
+        <p>HADYEK's own legal basis sits a level above the welfare yönetmelik, in primary legislation. Article 9 of Law No. 5199 (Hayvanları Koruma Kanunu, 2004) provides that institutions conducting animal experiments may do so only &ldquo;through ethics committees established within their own body&rdquo; (&ldquo;kendi bünyelerinde kurulmuş ve kurulacak etik kurullar yoluyla&rdquo;). The same article delegates their composition and procedure to a Ministry regulation, issued after consulting the Ministry of Health <cite>(Law No. 5199, art 9(4)&ndash;(5))</cite>. That instrument is the Hayvan Deneyleri Etik Kurullarının Çalışma Usul ve Esaslarına Dair Yönetmelik (RG 15.02.2014, No. 28914). It was issued under Kanun arts 9 and 17 and &ldquo;in parallel with&rdquo; the Directive <cite>(madde 3)</cite>, and it replaced a 2006 regulation of the same name (RG 06.07.2006, No. 26220) <cite>(madde 23)</cite>. Read directly, it answers the questions earlier drafts of this paper left open, and nearly all its answers match the Directive.</p>
+        <p>HADMEK has 21 members: senior Ministry officials, three experienced representatives each from the agriculture and health ministries and from veterinary and medical faculties, one each from the medical and veterinary associations and TÜBİTAK, and one animal-protection NGO member. It meets quarterly with a two-thirds quorum <cite>(madde 6)</cite>. Its duties are to set ethical principles, approve and suspend local rulebooks, inspect local committees and the laboratories they serve, hear appeals, set training rules, judge certificate equivalence, and collect and publish annual statistics <cite>(madde 7)</cite>. A HADYEK may be set up only where the institution has a Ministry-licensed animal unit, and no experiment may run without both a HADYEK and an animal-welfare unit <cite>(madde 8(1))</cite>. Its minimum membership has five parts. There must be a full-time veterinarian with a year's experience and a user certificate, and a representative of the units that use animals. Two independent members follow: a citizen with no conflict of interest who does no animal research, and a member of an NGO with no ties to the institution. At least one member must hold a doctorate or medical specialty with a year's in vivo experience. The committee has 5 to 21 members, its chair and veterinarian must be full-time employees, and all members are appointed by the rector or head of the institution <cite>(madde 8(2)&ndash;(4))</cite>. It meets at least monthly with a two-thirds quorum and decides by majority; members recuse themselves from their own applications <cite>(madde 8(8)(a)&ndash;(b), (h))</cite>.</p>
+        <p>The evaluation itself follows the Directive closely. Projects are assessed against eight criteria <cite>(madde 15(1))</cite>:</p>
+        <ul>
+          <li>their scientific, educational or legal justification;</li>
+          <li>the justification for using animals;</li>
+          <li>humane and environmentally sensitive design;</li>
+          <li>expected scientific and educational benefit;</li>
+          <li>compliance with the 3Rs;</li>
+          <li>severity classification;</li>
+          <li>&ldquo;the benefit to be gained and the suffering of the animals&rdquo;;</li>
+          <li>compliance of killing, anaesthesia, reuse and housing with the law, and whether retrospective assessment is needed.</li>
+        </ul>
+        <p>This is Article 38(1)&ndash;(2), harm-benefit analysis included. Reviewers are to be chosen for expertise in the 3Rs, experimental design, practical animal experimentation, wildlife work or animal care <cite>(madde 15(2))</cite>, and the evaluation must be transparent and impartial <cite>(madde 15(3))</cite>, as in Article 38(3)&ndash;(4). A committee decides in one of four ways within 40 working days of the application, including evaluation. It may extend that once by up to 15 working days where a project is complex or multidisciplinary, giving reasons before the deadline <cite>(madde 8(8)(ğ))</cite>. This is Article 41 almost word for word. Authorisations last at most five years <cite>(madde 8(8)(e))</cite>, as under Article 40(3). The application form must include a non-technical summary written in everyday language, the severity level, how the 3Rs are applied, and the humane killing method <cite>(madde 8(8)(d))</cite>. The summary must meet Article 43's content and anonymity rules <cite>(madde 16(1)&ndash;(3))</cite>. Retrospective assessment is mandatory for projects using primates or severe procedures <cite>(madde 17(2))</cite>, as under Article 39(2). A few activities are exempt from approval: clinical diagnosis and treatment, work on dead animals or tissue, milking, and faeces or swab sampling <cite>(madde 8(8)(k))</cite>.</p>
+        <p>Two divergences survive this convergence. The first is independence. In the EU, authorisation is an act of a competent authority. Bodies other than public authorities may take on its tasks only if they are &ldquo;free of any conflict of interests&rdquo; <cite>(Directive art 59(1)(b))</cite>. In Türkiye, a committee inside the user institution both evaluates and authorises. Its chair and veterinarian are that institution's employees, and its head appoints every member. Only two of its minimum five members must be free of ties to it. Madde 15(3) requires impartiality, but the structure places the decision inside the institution that wants the project run. The external checks are HADMEK's review on appeal and its power to suspend a committee <cite>(madde 7(1)(f), 21(2))</cite>.</p>
+        <p>The second is drift between the regulation and the rulebooks each committee writes for itself, which HADMEK must approve <cite>(madde 7(1)(b), 8(8)(c))</cite>. Three rulebooks were read for this paper. İzmir Institute of Technology's (2014) reproduces the regulation, including the 40-working-day clock and the benefit-versus-suffering criterion. İstanbul Medipol University's does not. It says applications are decided &ldquo;at the latest within two meetings&rdquo;, and it sets a simple-majority quorum where the regulation requires two-thirds. Its list of working principles also omits the benefit-versus-suffering test. İstanbul University-Cerrahpaşa's rulebook, approved by HADMEK in 2021, was obtained only as a scan and not reviewed in detail. A sample of three proves nothing about the system. It does show that the regulation's standards do not reach every committee's own rules unchanged, even after HADMEK approval.</p>
+        <p>Aquatic research runs through a parallel system. The 2019 aquatic-vertebrate regulation originally carried over the local ethics committee's powers from the welfare yönetmelik. Its amendments then set up separate aquatic committees (SOCYEK) under their own central committee (SOCMEK), which approves their rules and began work in 2023. The Directorate-General of Fisheries and Aquaculture issues five-year operating permits, and a SOCYEK may approve a project for up to three years <cite>(Demirel &amp; Uluköy, 2025, pp. 116&ndash;119)</cite>. The consolidated text shows how these committees are built. Since the 2022 amendment (RG 23.12.2022, No. 32052), every permitted aquatic facility must have a SOCYEK of five to eleven members, and no aquatic experiments may be done where none exists. The chair and the facility manager must be employees, and the rector or head appoints all members. Only one member, drawn from an animal-related NGO, must have no ties to the institution <cite>(madde 31/C)</cite>. A HADYEK needs two. SOCMEK, recomposed in 2024 (RG 27.04.2024, No. 32529), is chaired from the Ministry and must collect and publish annual national statistics on aquatic animal use <cite>(madde 31/A, 31/B(1)(h))</cite>. The same authors describe recurring confusion over which activities count as a &ldquo;procedure&rdquo; needing approval, such as egg and sperm stripping from broodstock <cite>(p. 122)</cite>.</p>
+        <p>Law No. 5199 art 9 also states substantive tests directly, at statutory level. Animals may not be used in non-scientific diagnosis, treatment or experiments <cite>(art 9(1))</cite>. Experiments must protect the animals, which must be properly cared for and housed <cite>(art 9(2))</cite>. Use is permitted only &ldquo;in the absence of any other option&rdquo; (&ldquo;başkaca bir seçenek olmaması halinde&rdquo;) <cite>(art 9(3))</cite>, a replacement principle placed in primary legislation rather than in implementing regulation (addressed in Section 4). These are threshold conditions; the evaluation method sits in the 2014 regulation. The Kanun also delegates the breeding, housing and care of experimental animals, the registration (tescil) of establishments, staff qualifications, records and permitted species to a Ministry regulation <cite>(art 9(6))</cite>. The welfare yönetmelik implements that delegation, alongside its main basis in Law No. 5996. &ldquo;Bakanlık&rdquo; in the Kanun is the Tarım ve Orman Bakanlığı <cite>(art 3(o))</cite>. Since 2018 that one ministry holds the powers the two regulations originally divided between the agriculture ministry (welfare) and the forestry and water ministry (ethics committees). One Kanun-level control sits outside this structure: the import and export of experimental animals requires a Ministry permit <cite>(art 10(7))</cite>. The Directive has no counterpart; it leaves cross-border movement to EU animal-health law.</p>
+        <p>The EU benchmark is itself less uniform than Article 38's wording suggests. A cross-national study found that France, Germany, Finland, Denmark and Sweden reworded the harm-benefit requirement on transposition. Denmark, for instance, speaks of a project's &ldquo;usefulness&rdquo; and omits ethical considerations, and Finland drops the outcome element. National guidance on carrying out the analysis existed only in France, the Netherlands, Switzerland and the UK, plus one regional document for Brussels <cite>(Hajosi &amp; Grimm, 2024, pp. 6&ndash;9, 19&ndash;20)</cite>. On this point Türkiye's text is closer to the Directive's wording than several Member States'. What neither record shows is how the test is applied in practice, and for Türkiye no data on it exist at all.</p>
+      </div>
+    </section>
+
+    <section class="chapter" id="s4">
+      <div class="chapter__head"><span class="chapter__num">04</span><h2 class="chapter__title">Severity Classification and the 3Rs: Binding or Aspirational?</h2></div>
+      <div class="prose">
+        <p>Textually, the two regimes are close to identical. Directive art 4(1)&ndash;(3) states replacement, reduction, and refinement as binding obligations on Member States; the yönetmelik's madde 26 mirrors the same three-part structure, and Kanun art 9 independently states two of the three at the level of primary legislation: replacement, &ldquo;in the absence of any other option&rdquo; <cite>(art 9(3))</cite>, and a general refinement-type duty to conduct experiments protectively and to care for and house the animals appropriately <cite>(art 9(2))</cite>. Reduction has no statutory anchor and exists only in the yönetmelik. This is a placement the Directive's own 3Rs principle does not have (art 4 sits in secondary EU law, transposed into national implementing rules). Severity classification shows the same convergence: Directive art 15 requires every procedure classified case-by-case as non-recovery, mild, moderate, or severe using Annex VIII criteria; madde 22 requires the identical four-tier classification (düzelmez/hafif/orta/şiddetli) using Ek-8 criteria, which reproduce Annex VIII's category definitions, assessment factors and worked examples; the aquatic regulation's Ek-3 does the same. Method-choice and anaesthesia obligations (madde 20&ndash;21) track Directive arts 13&ndash;14 comparably closely.</p>
+        <p>One genuine divergence survives this convergence, and it is institutional rather than definitional. Directive art 15(2) prohibits procedures involving severe, long-lasting, unrelievable pain outright; an exception requires a Member State to invoke the art 55(3) safeguard clause: a &ldquo;provisional measure&rdquo; the state must adopt and immediately report to the European Commission and every other Member State. Madde 22(3) of the welfare yönetmelik permits the same exception, but grants the power to <em>any individual yerel etik kurul</em>, case by case, on scientific grounds. The aquatic regulation repeats it. The local committee or the facility manager may also refuse such a procedure <cite>(madde 22(2))</cite>. The ethics regulation adds two safeguards: a committee must weigh the benefit against the animals' suffering before allowing severe, prolonged procedures <cite>(madde 10(m))</cite>, and every project with severe procedures must undergo retrospective assessment <cite>(madde 17(2))</cite>. What the Turkish texts do not contain is any notification to a national authority. The EU treats this decision as significant enough to require international visibility; Türkiye treats it as a local committee's discretionary call, reviewed after the fact.</p>
+        <p>Beyond that specific divergence, the honest conclusion is that statutory text does not distinguish these regimes at this layer: both bind on paper. What &ldquo;binding&rdquo; means is itself contested. Grimm and Dusseldorp argue that the 3Rs are principles in the norm-theoretical sense, commands to realise their content to the highest degree possible, measured against the Directive's stated goal of full replacement (recital 10). Read that way, they call for more than incremental improvement on an initial design <cite>(Grimm &amp; Dusseldorp, 2025, pp. 557&ndash;560)</cite>. Neither regime's text says which reading its review bodies should apply. Whether the classification and 3Rs obligations are <em>applied</em> with comparable rigor is an enforcement-capacity question, not a drafting one, and it is addressed with the relevant evidence in Section 6.</p>
+      </div>
+    </section>
+
+    <section class="chapter" id="s5">
+      <div class="chapter__head"><span class="chapter__num">05</span><h2 class="chapter__title">Personnel Competence: Article 23 and Its Turkish Mirror</h2></div>
+      <div class="prose">
+        <p>The convergence pattern from Sections 2 and 4 repeats here. Directive art 23 requires adequate education and training before performing any of four functions: carrying out procedures, designing procedures and projects, caring for animals, and killing animals; designers must additionally hold discipline-relevant training and species-specific knowledge, and staff in the other three functions work under supervision until competence is demonstrated <cite>(art 23(1)&ndash;(2))</cite>. Madde 32 reproduces this exact four-function structure (prosedür uygulamak, prosedür/proje tasarlamak, hayvanlara bakmak, hayvanları öldürmek) with the same designer-specific and supervision-until-competent rules <cite>(madde 32(2)&ndash;(3))</cite>. Article 23(3) requires Member States to publish minimum training requirements against Annex V; madde 32(4) points to Ek-10 (Annex 10) as its training-content basis. Ek-10 lists 11 minimum training elements that translate Directive Annex V one for one, from national legislation and ethics through humane end-points, the 3Rs and project design. The aquatic regulation's Ek-4 repeats the same list <cite>(welfare yönetmelik Ek-10; aquatic regulation Ek-4)</cite>. The Turkish training curriculum therefore matches the Directive on paper. What differs is who must take it (below) and who certifies it.</p>
+        <p>From there the Turkish regime departs from Article 23 in two opposite directions. It is looser on training. From 1 January 2013, a sorumlu yönetici (facility manager) must have worked at least two years with laboratory animals. A manager who lacks that experience, and anyone who performs procedures, must instead complete and pass Ek-10 training <cite>(madde 32(4))</cite>. An earlier draft of this paper misread this as a grandfather clause for experience gained before 2013. The text in fact sets the experience rule from 2013 onward. Either way, experience can stand in for the Ek-10 course for managers. Article 23 has no such substitute. The aquatic regulation goes further. Two years' experience or its Ek-4 training qualifies a manager, and university managers and researchers with a doctorate need no training at all <cite>(madde 29(2))</cite>.</p>
+        <p>It is stricter on profession. The welfare yönetmelik defines the sorumlu yönetici as a veterinarian <cite>(madde 4(ş))</cite>, and animals are killed by a veterinarian or under a veterinarian's supervision <cite>(madde 30(1)(b))</cite>. Under the ethics regulation, experiments on live animals are carried out under the responsible veterinarian's supervision <cite>(madde 10(g))</cite>, and every farm-animal research team must include a veterinarian <cite>(madde 18(c))</cite>. Every HADYEK must also include a full-time veterinarian <cite>(madde 8(2)(a))</cite>. The Directive asks only that killing be done by a &ldquo;competent person&rdquo; <cite>(art 6(2))</cite>. It allows a &ldquo;suitably qualified expert&rdquo; in place of a designated veterinarian <cite>(art 25)</cite>, an option some veterinary commentators want removed <cite>(Kiraga &amp; Dzikowski, 2023, p. 8)</cite>. The aquatic regulation breaks the pattern: its managers may be aquaculture or fisheries engineers, biologists, zoologists or hydrobiologists as well as veterinarians <cite>(Demirel &amp; Uluköy, 2025, p. 118)</cite>.</p>
+        <p>Certification is decentralised. Anyone who handles animals in research must hold a user certificate, and a committee may not approve a project whose staff lack one <cite>(ethics regulation madde 18(b)&ndash;(d))</cite>. Each HADYEK runs its own courses, requiring 80% attendance and a mark of 70 out of 100. The certificate is signed by the committee chair and the rector or institution head <cite>(madde 18(a), (ğ)&ndash;(i))</cite>. HADMEK sets course content and judges certificates from elsewhere; a HADYEK judges whether degree-level training is equivalent <cite>(madde 18(f), (l)&ndash;(m))</cite>. Competence is thus certified institution by institution, which helps explain why no systemic mapping onto FELASA categories exists (Section 1). Course content was first set by a 2007 ministerial circular (Genelge 2007/11). It defined A1 for animal caretakers (31 hours), and A2 for technicians and B for researchers (40 hours of theory plus 40 of practice each) <cite>(HADMEK, 2015)</cite>. HADMEK acknowledged in 2017 that the circular had not been updated to the Directive and began revising it <cite>(HADMEK, 2017)</cite>. Its replacement, Genelge 2019/3, is in force: HADMEK's 2026 list of certificate courses is issued under it <cite>(HADMEK, 2026)</cite>. This paper has not read Genelge 2019/3 itself.</p>
+        <p>The Kanun anchors this regime. Art 9(6) delegates &ldquo;çalışan personelin nitelikleri&rdquo; (the qualifications of staff) to Ministry regulation. Personnel status has penalty consequences: art 28 doubles any administrative fine where the offender is a veterinarian, veterinary health technician, or a person tasked with caring for or protecting animals. Art 7(1) provides, without qualification, that medical and surgical interventions on animals are carried out only by veterinarians (&ldquo;sadece veteriner hekimler tarafından yapılır&rdquo;), and art 28(c) attaches a per-animal fine to breaches. The regulations' veterinarian-centred pattern fits that rule. But none of them says whether non-veterinarian researchers may perform surgical procedures in an approved project under a veterinarian's supervision. That question is carried to Section 8.</p>
+      </div>
+    </section>
+
+    <section class="chapter" id="s6">
+      <div class="chapter__head"><span class="chapter__num">06</span><h2 class="chapter__title">Inspection, Enforcement, and Reporting Obligations</h2></div>
+      <div class="prose">
+        <p>Earlier drafts of this paper located the enforcement gap here, in the text. A direct reading of the regulations moves it. Internationally, inspection systems vary widely and are not always seen as effectively implemented, and sanctions range from fines through imprisonment to withdrawal of authority or accreditation <cite>(Bayne et al., 2010, p. 111)</cite>. Directive art 34 requires risk-based inspection of at least one-third of users each year, primate facilities yearly, and an &ldquo;appropriate proportion&rdquo; unannounced. The welfare yönetmelik copies this and goes further on surprise visits. The Ministry, its institutes or provincial directorates must inspect regularly on a risk analysis using the Directive's four criteria. They must reach at least one-third of establishments a year and primate facilities yearly, and at least half of all inspections must be unannounced; records are kept for five years <cite>(madde 37)</cite>. The ethics regulation makes all its provisions subject to Ministry inspection on HADMEK's opinion, with or without notice <cite>(madde 20)</cite>. It gives HADMEK its own power to inspect committees and the laboratories they serve <cite>(madde 7(1)(c)&ndash;(d))</cite>. Law No. 5199 supplies the statutory basis. Art 17(1) vests inspection authority in the Bakanlık, delegable to the highest local civil administrator (&ldquo;mahallin en büyük mülkî amiri&rdquo;), and art 25 gives that authority the power to fine.</p>
+        <p>Two gaps survive. The aquatic regulation keeps the risk analysis and the 50% unannounced rule but drops the one-third annual floor <cite>(madde 32)</cite>, and the 2022 and 2024 amendments left that article unchanged. Fish made up 37% of all animals used in 2020. And there is no public record of whether the floor is met anywhere. No Ministry inspection counts under madde 37 were found in this research. The only published count is HADMEK's own. It lists 33 inspections in 2008&ndash;2015: 1 in 2008, 22 in 2009, 2 each in 2010 and 2011, none in 2012, 1 in 2013, none in 2014 and 5 in 2015 <cite>(HADMEK, 2015)</cite>. These are central-committee inspections, a track separate from the Ministry's madde 37 duty, and they are not evidence that madde 37 is breached. But they are the only observable data. Against roughly 90 active local committees, they show occasional central scrutiny rather than a cycle.</p>
+        <p>Penalties run on two statutory tracks, both fixed schedules. Directive art 60 requires penalties to be &ldquo;effective, proportionate and dissuasive,&rdquo; a qualitative standard Member States implement and notify to the Commission, deliberately left open to scale with the violation and the violator. Breaches of the welfare yönetmelik are sanctioned under Law No. 5996. Operating without a permit, keeping no records, failing animals' welfare needs, breaking transport rules and failing to identify animals each carry the fines of 5996 art 36(1)(e), (f), (g) or (i). They sit alongside suspension of activity, permit revocation and confiscation <cite>(welfare yönetmelik madde 39; aquatic regulation madde 34)</cite>. The base amounts in Law No. 5996 art 36 are small. Failing animals' welfare, housing or feeding needs costs 100 TRY per animal <cite>(art 36(1)(g))</cite>. Operating without approval costs 5,000 TRY and a ban, and failing to keep records costs 1,000 TRY <cite>(art 36(1)(i))</cite>. Failing to identify or register animals costs 50 TRY per animal and 200 TRY per establishment <cite>(art 36(1)(e))</cite>. Only the transport-document fines of art 36(1)(f) were raised recently, to 26,360 TRY per vehicle for most species, by Law No. 7584 in June 2026. Turkish administrative fines are revalued annually, so current amounts are higher than these base figures, but this paper has not verified them. On either statute, a welfare breach in a research facility is priced per animal at a level that does not trouble an institution's budget. Breaches of the ethics regulation and unauthorised experiments fall under Law No. 5199 <cite>(ethics regulation madde 21(1))</cite>. The regulation cites art 28(1)(f); in the current text the art 9 fines sit in art 28(e), and (f) concerns art 10, a cross-reference apparently left behind by the 2021 re-lettering. HADMEK can suspend a non-compliant HADYEK for one month, then six, and then cancel its rulebook <cite>(madde 21(2))</cite>. Law No. 5199 art 28(e) sets an itemized, per-animal administrative fine for failing to comply with art 9 &ldquo;and the yönetmelikler to be issued under it,&rdquo; which brings breaches of the welfare yönetmelik itself within the fine: 1,200 TRY per animal for general non-compliance, 4,500 TRY per animal for conducting experiments without authorization (2021-amended base figures; Turkish administrative fines are typically revalued annually by statute, so the current amount is almost certainly higher, though this paper has not verified the current figure). Two features of this schedule matter more than the exact number. First, it scales along the wrong axis for deterrence. The Kanun does include escalators: the fine is multiplied by the number of animals; it is doubled where the offender is a veterinarian, veterinary health technician, or a person tasked with animal care <cite>(art 28, penultimate para.)</cite>; and it rises one-fold on a repeated offence and three-fold on further repetition <cite>(art 30)</cite>. Art 24 adds a non-monetary sanction, a ban on keeping animals and confiscation, for anyone who breaches the Kanun's protective provisions. None of these tracks the violator's resources, so the same schedule applies to a small academic lab and a facility running multinational-sponsored preclinical work. Second, it is exclusively administrative. Law No. 5199 art 28/A, which creates criminal, custodial penalties, covers killing an endangered animal or destroying a species' lineage, intentionally killing or torturing an ev hayvanı or evcil hayvan, sexual assault on animals, and animal fighting. None of its offences is framed around experimental use, and prosecution under it requires a written application from the Ministry's provincial or district directorate. Experimental-animal violations therefore remain, in ordinary reading, a kabahat (administrative infraction), not a suç (crime). One interpretive edge is left open: art 28/A(2) carries no scientific-use carve-out, and whether a purpose-bred laboratory animal could ever count as an &ldquo;evcil hayvan&rdquo; (defined in art 3(e) as an animal &ldquo;cultured <em>and trained</em>&rdquo; by humans) is unaddressed. The &ldquo;trained&rdquo; element makes that unlikely for most laboratory species.</p>
+        <p>One further enforcement gap is visible only in the Kanun. The import and export permit for experimental animals <cite>(art 10(7))</cite> has no matching fine: art 28(f) sanctions the first, fourth, fifth, sixth and eighth paragraphs of art 10, but not the seventh.</p>
+        <p>On reporting, the section heading's third term, the Directive requires public-facing transparency, and Regulation (EU) 2019/1010 strengthened it. Since 2021, non-technical project summaries go to the Commission within six months of authorisation for an open-access, searchable EU database. Statistics are now submitted electronically and published annually in a database, and the former Article 57 report was deleted <cite>(Busquet, 2020, pp. 168&ndash;169)</cite>. Even the EU figures are incomplete: about 8 million animals falling under the Directive, alongside roughly 10 million counted each year, were not included in the headline count <cite>(Busquet, 2020, p. 167)</cite>.</p>
+        <p>Türkiye has most of this on paper. Establishments must file annual records on standard forms with the provincial directorate each January <cite>(welfare yönetmelik madde 34(2))</cite>. HADYEKs send statistics and an annual report to HADMEK <cite>(ethics regulation madde 9(1)(g))</cite>, which must collect and publish annual national statistics <cite>(madde 7(1)(h))</cite>. Non-technical summaries are required in every application and must follow the Directive's content and anonymity rules <cite>(madde 8(8)(d), 16(1)&ndash;(3))</cite>. But they are published only &ldquo;if the Ministry creates a database&rdquo; <cite>(madde 16(4))</cite>, and no such database was found. HADMEK has published its statistics in multi-year reports: 2010&ndash;2014 (issued 2015), 2015&ndash;2016 (2017), 2017 (2018) and 2018&ndash;2020 (2021). An earlier, unpublished central-committee report counted 148,957 animals in 2008 <cite>(İzmirli et al., 2010)</cite>. The 2010&ndash;2014 report promised annual reports from 2015, but none covering a year after 2020 has been found <cite>(HADMEK, 2015)</cite>.</p>
+        <div class="stats-wrap">
+        <table class="stats">
+          <thead><tr><th>Year</th><th>Animals used</th><th>of which fish</th></tr></thead>
+          <tbody>
+            <tr><td>2010</td><td>270,307</td><td>55,275</td></tr>
+            <tr><td>2011</td><td>201,606</td><td>50,035</td></tr>
+            <tr><td>2012</td><td>173,152</td><td>54,039</td></tr>
+            <tr><td>2013</td><td>167,634</td><td>30,226</td></tr>
+            <tr><td>2014</td><td>213,366</td><td>45,894</td></tr>
+            <tr><td>2015</td><td>386,745</td><td>216,418</td></tr>
+            <tr><td>2016</td><td>451,914</td><td>249,213</td></tr>
+            <tr><td>2017</td><td>265,109</td><td>132,498</td></tr>
+            <tr><td>2018</td><td>236,297</td><td>68,057</td></tr>
+            <tr><td>2019</td><td>213,641</td><td>76,377</td></tr>
+            <tr><td>2020</td><td>209,212</td><td>77,435</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <p class="note">Table 2. Animals used for scientific purposes in Türkiye, 2010&ndash;2020, as reported by HADMEK <cite>(HADMEK, 2015, 2017, 2018, 2021)</cite>. Figures are read from the reports' charts.</p>
+        <p>Two features of the series matter more than the trend. First, fish drive the swings: the 2015&ndash;2016 peak is almost entirely fish. Second, HADMEK itself warned that the data are not comparable with the EU's. It said fish, poultry and farm animals were over-reported because veterinary clinical research was being counted as experimental, and that local committees needed training to fill in the statistical tables. In 2011, 14.1% of Turkish use was recorded under disease diagnosis against 1.6% in the EU <cite>(HADMEK, 2015)</cite>.</p>
+        <p>What Türkiye lacks is project-level transparency in practice, and the text leans against it. The welfare yönetmelik forbids any public statement about procedures without the consent of the person responsible for them, leaving disclosure to the Ministry <cite>(madde 34(1))</cite>. The aquatic regulation repeats the rule <cite>(madde 30)</cite>. The ethics regulation makes local committees' correspondence confidential <cite>(madde 22(1))</cite>, while also requiring that the public be given &ldquo;objective information&rdquo; about projects <cite>(madde 22(3))</cite>. At project level, reporting runs inward to the state, not outward to the public (Table 1, row 8).</p>
+        <p>This closes the loop opened in Section 1. Fixed fine schedules that never scale with the violator's resources are a weaker deterrent for an internationally linked facility than the loss of AAALAC accreditation or a sponsor's contract. And with little public evidence of inspection or review, outsiders cannot tell how often any sanction is used. That is why assurance in that context comes from accreditation and sponsor audit rather than from the statutory regime.</p>
+      </div>
+    </section>
+
+    <section class="chapter" id="s7">
+      <div class="chapter__head"><span class="chapter__num">07</span><h2 class="chapter__title">Where Turkish Law Diverges, and the Practical Consequence</h2></div>
+      <div class="prose">
+        <p>A reader who compares the Turkish regulations with the Directive article by article will find a faithful transposition, and not only of the substantive standards. The 2014 ethics regulation reproduces the Directive's project-evaluation criteria, reviewer expertise, decision clock, five-year authorisation limit, non-technical summaries and retrospective assessment. The welfare yönetmelik reproduces its inspection floor and raises the unannounced share. Earlier drafts of this paper, working from the Kanun and secondary accounts, placed the divergence in exactly those institutional rules. The primary texts do not support that.</p>
+        <p>Six divergences survive, each narrower:</p>
+        <ol>
+          <li><strong>Independence.</strong> Evaluation and authorisation both sit with a committee inside the user institution, chaired by one of its employees and appointed by its head. The Directive expects a competent authority or a conflict-free designated body.</li>
+          <li><strong>The severe-pain exception</strong> is a local committee's call, not a notified state measure.</li>
+          <li><strong>Aquatic inspection.</strong> The aquatic regime omits the one-third inspection floor for the largest group of animals used, and its committees need only one member independent of the institution.</li>
+          <li><strong>Transparency.</strong> The text leans against it: summaries depend on a database the Ministry need not build, and three provisions restrict disclosure.</li>
+          <li><strong>Personnel.</strong> The regime is more veterinarian-centred than the Directive, and for facility managers it lets experience substitute for training.</li>
+          <li><strong>Penalties</strong> are fixed schedules on two statutory tracks, not scaled to the violator.</li>
+        </ol>
+        <p>The larger divergence is observational. The Directive's chain is not only written down but reported on: open project summaries, annual statistics, five-yearly implementation reports, and Commission controls of national inspections <cite>(arts 35, 43, 54)</cite>. Türkiye's chain is written down in nearly the same words, but its performance leaves few public traces. There are no inspection counts under madde 37 and no summary database. National statistics stop at 2020, and HADMEK itself warns against comparing them. Rulebooks do not always carry the regulation's standards. For a hiring manager or compliance officer, the consequence is sharper than &ldquo;the law is weak&rdquo;: the law is largely adequate, and its application cannot be checked from outside. Due diligence on a Turkish facility therefore still has to reach facility-specific evidence: the HADYEK's own rulebook and minutes, inspection reports held by the facility, AAALAC status and sponsor audit history. The public record will not supply them.</p>
+      </div>
+    </section>
+
+    <section class="chapter" id="s8">
+      <div class="chapter__head"><span class="chapter__num">08</span><h2 class="chapter__title">Open Questions and Direction of Travel</h2></div>
+      <div class="prose">
+        <p>This revision checked every Turkish regulation the paper cites against the original Resmî Gazete texts: the welfare yönetmelik (RG 13.12.2011, No. 28141), the ethics regulation (RG 15.02.2014, No. 28914) and the aquatic regulation (RG 20.04.2019, No. 30751). It then checked them against consolidated texts. The welfare yönetmelik was amended twice. The first amendment (RG 03.04.2012, No. 28253) covers rehoming and personnel notices (madde 28, 29, 33). The second (RG 08.07.2019, No. 30825) moves permit filing to provincial directorates and lets them authorise procedures outside a user establishment for at most three years (madde 11, 12, 19, 38). Neither changes the provisions this paper relies on (madde 22, 32, 34, 37). The aquatic regulation's 2022 and 2024 amendments add the SOCMEK/SOCYEK system but leave madde 20, 29, 30 and 32 unchanged. The ethics regulation has not been amended; Lexpera lists only its original text. Two limits remain. First, the annexes, obtained separately from the Resmî Gazete archive, settle one earlier question: Ek-10 (training) and Ek-8 (severity) track Directive Annexes V and VIII. What remains open is how certificates issued under Genelge 2019/3 map onto FELASA function categories, which the annexes do not address. Second, the current revalued amounts of both fine schedules (Law No. 5199 art 28 and Law No. 5996 art 36) have not been verified; the paper gives base figures.</p>
+        <p>The paper's argument now turns on practice, and that is where the research gap lies. No study found for this paper examines how HADYEKs work: approval rates, turnaround against the 40-day clock, how often the severe-pain exception is used, or how many Ministry inspections take place under madde 37. Descriptive and legal accounts exist <cite>(e.g., Gölcü &amp; Aksoy, 2017; Uludağ, 2019; Demirel &amp; Uluköy, 2025)</cite>, but the empirical layer is unstudied. The three rulebooks read here suggest a tractable first study: a systematic comparison of HADYEK rulebooks, which institutions often publish, against the 2014 regulation.</p>
+        <p>The full-text reading of Law No. 5199 adds two interpretive questions that only practice or case law can settle. First, whether the veterinarian-only rule for medical and surgical interventions <cite>(art 7(1))</cite> constrains who may perform surgical procedures in an approved project, which would be a substantial divergence from Directive art 23 in the opposite direction, stricter rather than looser. Second, whether any experimental-animal conduct could fall within the criminal offences of art 28/A, which contain no scientific-use exception. A due-diligence review of a Turkish facility should ask how its HADYEK and its legal counsel read both.</p>
+        <p>The direction-of-travel question is harder to answer than it first appears. Accession negotiations have been stalled since 2018, yet the welfare yönetmelik, dated to the more active 2011&ndash;2014 negotiating period, remains a close textual match to the Directive at nearly every layer this paper could check, including recent EU-side detail like the cephalopod-inclusion and needle-prick thresholds. Whether that reflects ongoing technical alignment independent of accession politics, or a high-water mark frozen at the moment negotiations stalled and not revisited since, is itself unverified: the Directive has been amended since 2014 (Annex IV's killing-methods update in 2024, for instance), and whether Türkiye's implementing text tracks such amendments is a live question this research did not resolve. The international-law channel is weaker still: Türkiye signed the Council of Europe's Convention ETS No. 123 on vertebrate animals used for experimental purposes in 1986, but it has not entered into force for Türkiye <cite>(Akben, 2023)</cite>. Alignment has run through domestic regulation modelled on EU law, not through treaty obligation. Nor is that regulation frozen: the aquatic regulation (2019) and its 2022 and 2024 amendments, and the 2019 training circular, show the framework still being revised after accession talks stalled. For a facility weighing long-term compliance investment, that uncertainty, not the current text, may be the more consequential unknown.</p>
+      </div>
+    </section>
+
+    <section class="chapter" id="refs">
+      <div class="chapter__head"><h2 class="chapter__title">References</h2></div>
+      <div class="refs">
+        <div class="ref">Akben, D. (2023). Alman hukukunda ve Türk hukukunda hayvanların korunmasının karşılaştırılması [A comparison of animal protection in German and Turkish law]. <em>Dokuz Eylül Üniversitesi Hukuk Fakültesi Dergisi, 25</em>(2), 1047&ndash;1102. <a href="https://doi.org/10.33717/deuhfd.1375617">https://doi.org/10.33717/deuhfd.1375617</a></div>
+        <div class="ref">AAALAC International. (n.d.). <em>Directory of accredited organizations</em>. Retrieved August 26, 2026, from <a href="https://www.aaalac.org/accreditation/directory/directory-of-accredited-organizations-search-result/">aaalac.org/accreditation/directory</a></div>
+        <div class="ref">Bayne, K., Morris, T. H., &amp; France, M. P. (2010). Legislation and oversight of the conduct of research using animals: A global overview. In R. Hubrecht &amp; J. Kirkwood (Eds.), <em>The UFAW handbook on the care and management of laboratory and other research animals</em> (8th ed., pp. 107&ndash;123). Wiley-Blackwell.</div>
+        <div class="ref">Bilimsel Amaçlar İçin Kullanılan Sucul Omurgalı Canlıların Refah ve Korunmasına Dair Yönetmelik [Regulation on the Welfare and Protection of Aquatic Vertebrates Used for Scientific Purposes]. (2019). T.C. Resmî Gazete, April 20, 2019, No. 30751; amended December 23, 2022, No. 32052, and April 27, 2024, No. 32529. Consolidated text: mevzuat.gov.tr, retrieved September 28, 2026.</div>
+        <div class="ref">Busquet, F. (2020). New European Union statistics on laboratory animal use &ndash; what really counts! <em>ALTEX, 37</em>(2), 167&ndash;186. <a href="https://doi.org/10.14573/altex.2003241">https://doi.org/10.14573/altex.2003241</a></div>
+        <div class="ref">Demirel, B., &amp; Uluköy, G. (2025). Hayvan refahı bakış açısı ile bilimsel çalışmalarda sucul omurgalı canlıların kullanımının mevzuat açısından incelenmesi [A legislative evaluation of the use of aquatic vertebrates in scientific research from an animal welfare perspective]. <em>Mediterranean Fisheries and Aquaculture Research, 8</em>(2), 105&ndash;127. <a href="https://doi.org/10.63039/medfar.1818317">https://doi.org/10.63039/medfar.1818317</a></div>
+        <div class="ref">Deneysel ve Diğer Bilimsel Amaçlar İçin Kullanılan Hayvanların Refah ve Korunmasına Dair Yönetmelik [Regulation on the Welfare and Protection of Animals Used for Experimental and Other Scientific Purposes]. (2011). T.C. Resmî Gazete, December 13, 2011, No. 28141; amended April 3, 2012, No. 28253, and July 8, 2019, No. 30825. Consolidated text: Lexpera, retrieved September 28, 2026.</div>
+        <div class="ref">Directive 2010/63/EU of the European Parliament and of the Council of 22 September 2010 on the protection of animals used for scientific purposes. (2010). <em>Official Journal of the European Union</em>, L 276, 33&ndash;79.</div>
+        <div class="ref">European Commission, Directorate-General for Neighbourhood and Enlargement Negotiations. (2007). <em>Screening report Turkey: Chapter 12 &ndash; Food safety, veterinary and phytosanitary policy</em>. <a href="https://enlargement.ec.europa.eu/screening-report-turkey-chapter-12-food-safety-veterinary-and-phytosanitary-policy_en">enlargement.ec.europa.eu</a></div>
+        <div class="ref">Fiorito, G., Affuso, A., Basil, J., et al. (2015). Guidelines for the care and welfare of cephalopods in research &ndash; A consensus based on an initiative by CephRes, FELASA and the Boyd Group. <em>Laboratory Animals, 49</em>(2 Suppl.), 1&ndash;90. <a href="https://doi.org/10.1177/0023677215580006">https://doi.org/10.1177/0023677215580006</a></div>
+        <div class="ref">FELASA. (n.d.). <em>Education &amp; training</em>. Retrieved August 26, 2026, from <a href="https://felasa.eu/education-training">felasa.eu/education-training</a></div>
+        <div class="ref">Gölcü, B. M., &amp; Aksoy, A. (2017). Avrupa Birliği ve Türkiye'de deney hayvanları mevzuatına genel bir bakış [An overview of legislation on the use of experimental animals in the European Union and Turkey]. <em>Türkiye Klinikleri Journal of Laboratory Animals, 1</em>(1), 56&ndash;62. <a href="https://doi.org/10.5336/jlabanim.2016-52876">https://doi.org/10.5336/jlabanim.2016-52876</a></div>
+        <div class="ref">Grimm, H., &amp; Dusseldorp, M. (2025). The (re)turn of the 3Rs: An inquiry into the normative nature of Russell and Burch's principles of humane experimental technique. <em>Laboratory Animals, 59</em>(5), 556&ndash;569. <a href="https://doi.org/10.1177/00236772251326352">https://doi.org/10.1177/00236772251326352</a></div>
+        <div class="ref">Hajosi, D., &amp; Grimm, H. (2024). Mission impossible accomplished? A European cross-national comparative study on the integration of the harm-benefit analysis into law and policy documents. <em>PLOS ONE, 19</em>(2), e0297375. <a href="https://doi.org/10.1371/journal.pone.0297375">https://doi.org/10.1371/journal.pone.0297375</a></div>
+        <div class="ref">Hayvan Deneyleri Merkezi Etik Kurulu [HADMEK]. (2026, September 25). <em>2026 yılı deney hayvanı kullanım sertifikası eğitim programları listesi</em> [List of 2026 laboratory-animal user certificate programmes]. T.C. Tarım ve Orman Bakanlığı. <a href="https://hadmek.tarimorman.gov.tr/Duyuru/Detay/16896">hadmek.tarimorman.gov.tr</a></div>
+        <div class="ref">Hayvan Deneyleri Merkezi Etik Kurulu [HADMEK]. (2015). <em>2010&ndash;2014 yılları deney hayvanı kullanımı faaliyet raporu</em> [Activity report on the use of experimental animals, 2010&ndash;2014]. T.C. Orman ve Su İşleri Bakanlığı, Doğa Koruma ve Milli Parklar Genel Müdürlüğü.</div>
+        <div class="ref">Hayvan Deneyleri Merkezi Etik Kurulu [HADMEK]. (2017). <em>2015&ndash;2016 yılları Hayvan Deneyleri Merkezi Etik Kurulu faaliyet raporu</em> [Activity report, 2015&ndash;2016]. T.C. Orman ve Su İşleri Bakanlığı, Doğa Koruma ve Milli Parklar Genel Müdürlüğü.</div>
+        <div class="ref">Hayvan Deneyleri Merkezi Etik Kurulu [HADMEK]. (2018). <em>2017 yılı hayvan deneyleri istatistik raporu</em> [Statistical report on animal experiments, 2017]. T.C. Orman ve Su İşleri Bakanlığı, Doğa Koruma ve Milli Parklar Genel Müdürlüğü.</div>
+        <div class="ref">Hayvan Deneyleri Merkezi Etik Kurulu [HADMEK]. (2021). <em>2018&ndash;2020 yılları Hayvan Deneyleri Merkezi Etik Kurulu faaliyet raporu</em> [Activity report, 2018&ndash;2020]. T.C. Tarım ve Orman Bakanlığı, Doğa Koruma ve Milli Parklar Genel Müdürlüğü.</div>
+        <div class="ref">Hayvan Deneyleri Etik Kurullarının Çalışma Usul ve Esaslarına Dair Yönetmelik [Regulation on the Working Procedures and Principles of Animal Experiment Ethics Committees]. (2014). T.C. Resmî Gazete, February 15, 2014, No. 28914. (Replacing the regulation of the same name, T.C. Resmî Gazete, July 6, 2006, No. 26220.) Not amended as of September 2026 (Lexpera, retrieved September 28, 2026).</div>
+        <div class="ref">Hayvanları Koruma Kanunu [Animal Protection Law], Law No. 5199 (2004). T.C. Resmî Gazete, July 1, 2004, No. 25509; as amended by Laws No. 5728 (2008), 5996 (2010), 7332 (2021) and 7527 (2024). Consolidated text retrieved September 28, 2026, from <a href="https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=5199&amp;MevzuatTur=1&amp;MevzuatTertip=5">mevzuat.gov.tr</a></div>
+        <div class="ref">İstanbul Medipol Üniversitesi. (n.d.). <em>Hayvan Deneyleri Yerel Etik Kurulu yönergesi</em> [Local animal-experiment ethics committee rulebook].</div>
+        <div class="ref">İstanbul Üniversitesi-Cerrahpaşa. (2021). <em>Hayvan Deneyleri Yerel Etik Kurulu (İÜC-HADYEK) yönergesi</em> [Local animal-experiment ethics committee rulebook]. Approved by HADMEK, 2021.<span class="pending-note">Scanned copy; not reviewed in detail.</span></div>
+        <div class="ref">İzmir Yüksek Teknoloji Enstitüsü. (2014). <em>İYTE Hayvan Deneyleri Yerel Etik Kurulu yönergesi</em> [Local animal-experiment ethics committee rulebook].</div>
+        <div class="ref">İzmirli, S., Aldavood, S. J., Yasar, A., &amp; Phillips, C. J. C. (2010). Introducing ethical evaluation of the use of animals in experiments in the Near East. <em>Alternatives to Laboratory Animals, 38</em>(4), 331&ndash;336. <a href="https://doi.org/10.1177/026119291003800410">https://doi.org/10.1177/026119291003800410</a></div>
+        <div class="ref">Kiraga, Ł., &amp; Dzikowski, A. (2023). Ethical concerns of the veterinarian in relation to experimental animals and in vivo research. <em>Animals, 13</em>(15), 2476. <a href="https://doi.org/10.3390/ani13152476">https://doi.org/10.3390/ani13152476</a></div>
+        <div class="ref">Regulation (EU) 2019/1010 of the European Parliament and of the Council of 5 June 2019 on the alignment of reporting obligations in the field of legislation related to the environment. (2019). <em>Official Journal of the European Union</em>, L 170, 115&ndash;127.</div>
+        <div class="ref">Republic of Türkiye Ministry for EU Affairs. (n.d.). <em>Chapter 12: Food safety, veterinary and phytosanitary policy</em>. <a href="https://www.ab.gov.tr/chapter-12-food-safety-veterinary-and-phytosanitary-policy_77_en.html">ab.gov.tr</a></div>
+        <div class="ref">Veteriner Hizmetleri, Bitki Sağlığı, Gıda ve Yem Kanunu [Law on Veterinary Services, Plant Health, Food and Feed], Law No. 5996 (2010). T.C. Resmî Gazete, June 13, 2010, No. 27610; as amended, including by Law No. 7584 (2026). Consolidated text retrieved September 28, 2026, from <a href="https://www.mevzuat.gov.tr/MevzuatMetin/1.5.5996.pdf">mevzuat.gov.tr</a></div>
+        <div class="ref">Uludağ, Ö. (2019). Hayvan deneyi çalışmalarında etik kuralların tarihçesi ve önemi [History and importance of ethical rules in animal experiment studies]. <em>Adıyaman Üniversitesi Sağlık Bilimleri Dergisi, 5</em>(1), 1401&ndash;1413. <a href="https://doi.org/10.30569/adiyamansaglik.482098">https://doi.org/10.30569/adiyamansaglik.482098</a></div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="colophon">
+    <span>Two Gazettes &mdash; comparative regulatory analysis</span>
+    <span>Draft for review &middot; Law No. 5199 and the three regulations checked against primary texts &middot; regulations checked against consolidated texts &middot; current fine amounts still open (§8)</span>
+  </footer>
+
+</div>
+
