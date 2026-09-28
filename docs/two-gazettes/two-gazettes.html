@@ -1,0 +1,648 @@
+<title>Two Gazettes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@500;600;700&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg: #F6F4EE;
+    --surface: #FFFFFE;
+    --surface-sunken: #EFEBE0;
+    --ink: #1E2430;
+    --ink-soft: #4A5163;
+    --ink-faint: #7A8092;
+    --rule: #DCD6C7;
+    --rule-strong: #B9B196;
+    --eu: #33517F;
+    --eu-soft: #E7ECF4;
+    --tr: #93362B;
+    --tr-soft: #F5E7E3;
+    --pending: #8A5A12;
+    --pending-soft: #F3E7D2;
+    --match: #396647;
+    --match-soft: #E4EEE5;
+    --shadow: 0 1px 2px rgba(30,36,48,0.06), 0 8px 24px -12px rgba(30,36,48,0.14);
+    --radius: 3px;
+    --serif: "Spectral", Georgia, "Times New Roman", serif;
+    --sans: "Public Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #14161D;
+      --surface: #1B1E27;
+      --surface-sunken: #10121A;
+      --ink: #E9E6DC;
+      --ink-soft: #ADB2C0;
+      --ink-faint: #767C8E;
+      --rule: #2C3040;
+      --rule-strong: #3D4256;
+      --eu: #8CA6D6;
+      --eu-soft: #202B42;
+      --tr: #E0958A;
+      --tr-soft: #3A2420;
+      --pending: #E3B564;
+      --pending-soft: #3A2E15;
+      --match: #8FCBA1;
+      --match-soft: #1E3327;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #14161D;
+    --surface: #1B1E27;
+    --surface-sunken: #10121A;
+    --ink: #E9E6DC;
+    --ink-soft: #ADB2C0;
+    --ink-faint: #767C8E;
+    --rule: #2C3040;
+    --rule-strong: #3D4256;
+    --eu: #8CA6D6;
+    --eu-soft: #202B42;
+    --tr: #E0958A;
+    --tr-soft: #3A2420;
+    --pending: #E3B564;
+    --pending-soft: #3A2E15;
+    --match: #8FCBA1;
+    --match-soft: #1E3327;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 16.5px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 0 24px 96px;
+  }
+
+  a { color: var(--eu); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+  a:hover { text-decoration-thickness: 2px; }
+  a:focus-visible, button:focus-visible, summary:focus-visible {
+    outline: 2px solid var(--eu);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  /* ---------- Masthead ---------- */
+
+  .masthead {
+    padding: 56px 0 40px;
+    border-bottom: 1px solid var(--rule-strong);
+  }
+
+  .masthead__kicker {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 22px;
+  }
+
+  .masthead__kicker .instrument {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 8px;
+    border-radius: var(--radius);
+  }
+  .masthead__kicker .instrument.eu { background: var(--eu-soft); color: var(--eu); }
+  .masthead__kicker .instrument.tr { background: var(--tr-soft); color: var(--tr); }
+  .masthead__kicker .sep { color: var(--rule-strong); }
+
+  h1.title {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: clamp(2.1rem, 4.2vw, 3rem);
+    line-height: 1.12;
+    letter-spacing: -0.01em;
+    margin: 0 0 14px;
+    text-wrap: balance;
+    color: var(--ink);
+  }
+
+  .subtitle {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 1.18rem;
+    color: var(--ink-soft);
+    margin: 0 0 30px;
+    max-width: 46ch;
+  }
+
+  .byline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 22px;
+    font-size: 13.5px;
+    color: var(--ink-faint);
+    font-family: var(--mono);
+  }
+  .byline strong { color: var(--ink-soft); font-weight: 500; }
+
+  /* ---------- Abstract panel ---------- */
+
+  .abstract {
+    margin: 40px 0 8px;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--ink);
+    border-radius: var(--radius);
+    padding: 26px 30px;
+    box-shadow: var(--shadow);
+  }
+  .abstract__label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 12px;
+  }
+  .abstract p {
+    margin: 0;
+    font-size: 15.5px;
+    line-height: 1.7;
+    color: var(--ink-soft);
+    max-width: 74ch;
+  }
+
+  /* ---------- Table of contents ---------- */
+
+  .toc {
+    margin: 40px 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px 32px;
+  }
+  .toc__title {
+    grid-column: 1 / -1;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 8px;
+  }
+  .toc a {
+    display: flex;
+    gap: 10px;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--rule);
+    color: var(--ink-soft);
+    font-size: 14.5px;
+    text-decoration: none;
+  }
+  .toc a:hover { color: var(--ink); }
+  .toc a .n {
+    font-family: var(--mono);
+    color: var(--ink-faint);
+    min-width: 1.4em;
+  }
+
+  @media (max-width: 640px) {
+    .toc { grid-template-columns: 1fr; }
+  }
+
+  /* ---------- Sections ---------- */
+
+  section.chapter {
+    padding-top: 64px;
+    border-top: 1px solid var(--rule);
+    margin-top: 0;
+  }
+  section.chapter:first-of-type { border-top: none; }
+
+  .chapter__head {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 22px;
+  }
+  .chapter__num {
+    font-family: var(--mono);
+    font-size: 15px;
+    color: var(--ink-faint);
+    letter-spacing: 0.02em;
+  }
+  h2.chapter__title {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: 1.68rem;
+    line-height: 1.25;
+    margin: 0;
+    text-wrap: balance;
+    color: var(--ink);
+  }
+
+  h3.sub {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: 1.14rem;
+    margin: 34px 0 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  h3.sub .tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    padding: 2px 8px;
+    border-radius: var(--radius);
+    font-weight: 500;
+  }
+  h3.sub .tag.eu { background: var(--eu-soft); color: var(--eu); }
+  h3.sub .tag.tr { background: var(--tr-soft); color: var(--tr); }
+
+  .prose { max-width: 70ch; }
+  .prose p {
+    margin: 0 0 18px;
+    font-size: 16px;
+    line-height: 1.72;
+  }
+  .prose p:last-child { margin-bottom: 0; }
+
+  .prose em { color: var(--ink); }
+  .prose strong { font-weight: 600; }
+
+  cite, .cite {
+    font-style: normal;
+    font-family: var(--mono);
+    font-size: 0.86em;
+    color: var(--ink-faint);
+  }
+
+  .note {
+    font-size: 14px;
+    color: var(--ink-faint);
+    border-left: 2px solid var(--rule-strong);
+    padding-left: 14px;
+    margin: 22px 0;
+    max-width: 66ch;
+  }
+
+  /* ---------- Divergence table ---------- */
+
+  .table-wrap {
+    margin: 28px 0 8px;
+    overflow-x: auto;
+    border: 1px solid var(--rule-strong);
+    border-radius: var(--radius);
+    background: var(--surface);
+    box-shadow: var(--shadow);
+  }
+
+  table.divergence {
+    border-collapse: collapse;
+    width: 100%;
+    min-width: 980px;
+    font-size: 13.5px;
+  }
+
+  table.divergence th {
+    text-align: left;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    background: var(--surface-sunken);
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--rule-strong);
+    position: sticky;
+    top: 0;
+  }
+
+  table.divergence td {
+    padding: 14px 14px;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: top;
+    line-height: 1.55;
+  }
+  table.divergence tr:last-child td { border-bottom: none; }
+
+  table.divergence td.num {
+    font-family: var(--mono);
+    font-variant-numeric: tabular-nums;
+    color: var(--ink-faint);
+    width: 2.4em;
+  }
+  table.divergence td.topic { font-weight: 600; min-width: 15ch; }
+  table.divergence td.eu-cell { border-left: 2px solid var(--eu-soft); }
+  table.divergence td.tr-cell { border-left: 2px solid var(--tr-soft); }
+
+  .flag {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 1px 6px;
+    border-radius: var(--radius);
+    margin-right: 6px;
+    vertical-align: 1px;
+  }
+  .flag.pending { background: var(--pending-soft); color: var(--pending); }
+  .flag.match { background: var(--match-soft); color: var(--match); }
+  .flag.kanun { background: var(--tr-soft); color: var(--tr); }
+
+  /* ---------- References ---------- */
+
+  .refs { max-width: 74ch; }
+  .refs .ref {
+    font-size: 14.5px;
+    line-height: 1.65;
+    color: var(--ink-soft);
+    padding: 14px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  .refs .ref:last-child { border-bottom: none; }
+  .refs .ref em { font-style: italic; color: var(--ink); }
+  .refs .ref a { word-break: break-word; }
+  .refs .ref .pending-note {
+    display: inline-block;
+    margin-top: 4px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--pending);
+  }
+
+  /* ---------- Footer ---------- */
+
+  .colophon {
+    margin-top: 80px;
+    padding-top: 24px;
+    border-top: 1px solid var(--rule);
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink-faint);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  @media (max-width: 560px) {
+    .page { padding: 0 16px 72px; }
+    .masthead { padding: 40px 0 32px; }
+    .abstract { padding: 20px 20px; }
+  }
+</style>
+
+<div class="page">
+
+  <header class="masthead">
+    <div class="masthead__kicker">
+      <span class="instrument eu">Directive 2010/63/EU</span>
+      <span class="sep">&times;</span>
+      <span class="instrument tr">5199 &amp; HADYEK</span>
+    </div>
+    <h1 class="title">Two Gazettes</h1>
+    <p class="subtitle">Comparing the EU's Official Journal and Türkiye's Resmî Gazete on the protection of animals used for scientific purposes, article by madde.</p>
+    <div class="byline">
+      <span><strong>Format</strong> Comparative regulatory analysis</span>
+      <span><strong>Citation</strong> APA 7th</span>
+      <span><strong>Audience</strong> Regulatory affairs &amp; research compliance</span>
+    </div>
+
+    <div class="abstract">
+      <div class="abstract__label">Abstract</div>
+      <p>This paper compares the European Union's Directive 2010/63/EU on the protection of animals used for scientific purposes against Türkiye's implementing framework: the Deneysel ve Diğer Bilimsel Amaçlar İçin Kullanılan Hayvanların Refah ve Korunmasına Dair Yönetmelik, the HADYEK (Hayvan Deneyleri Yerel Etik Kurulu) ethics-committee structure, and 5199 sayılı Hayvanları Koruma Kanunu. Article-level analysis shows that Turkish law transposes the Directive's substantive standards &mdash; scope, definitions, the 3Rs principle, severity classification, and personnel-competence categories &mdash; with unusual fidelity. The comparison instead finds daylight at the institutional layer: HADYEK's project-evaluation criteria and decision timeline are statutorily mandated but not publicly locatable; the severe-pain exception sits with individual local ethics committees rather than requiring state-level, Commission-notified authorization; and enforcement carries no verified inspection-frequency floor and a per-animal fine schedule that escalates for repeat offences and for veterinary or animal-care staff but never with a facility's size or resources. A full-text reading of Law No. 5199 also shows that the Kanun carries more of the framework than is usually credited to it: its own definition of &ldquo;deney,&rdquo; a statutory care-and-protection duty alongside the replacement principle, the enabling basis for establishment registration, personnel qualifications, record-keeping and notification duties, and a veterinarian-only rule for surgical interventions whose reach into research practice is unresolved. The paper argues that, as a result, compliance in Turkish facilities is driven less by domestic legal obligation than by sponsor and accreditation pressure &mdash; a distinction with direct implications for regulatory-affairs due diligence.</p>
+    </div>
+
+    <nav class="toc" aria-label="Table of contents">
+      <div class="toc__title">Contents</div>
+      <a href="#s1"><span class="n">1</span> Why the comparison matters</a>
+      <a href="#s2"><span class="n">2</span> Scope and definitions</a>
+      <a href="#table1"><span class="n">&mdash;</span> Table 1: confirmed divergences</a>
+      <a href="#s3"><span class="n">3</span> Authorisation and project evaluation</a>
+      <a href="#s4"><span class="n">4</span> Severity classification and the 3Rs</a>
+      <a href="#s5"><span class="n">5</span> Personnel competence</a>
+      <a href="#s6"><span class="n">6</span> Inspection, enforcement, reporting</a>
+      <a href="#s7"><span class="n">7</span> Divergence &amp; practical consequence</a>
+      <a href="#s8"><span class="n">8</span> Open questions &amp; direction of travel</a>
+    </nav>
+  </header>
+
+  <main>
+
+    <section class="chapter" id="s1">
+      <div class="chapter__head"><span class="chapter__num">01</span><h2 class="chapter__title">Why the Comparison Matters</h2></div>
+      <div class="prose">
+        <p>Türkiye's framework for laboratory animal use is structurally similar to Directive 2010/63/EU, but it diverges precisely where the EU regime binds: severity classification, project-level authorisation, and personnel competence. The practical consequence is that compliance in Turkish facilities depends more on sponsor and accreditation pressure than on domestic legal obligation. This divergence is not merely academic. It determines whether data generated in a Turkish facility will be accepted without qualification by a European or American regulator, whether a multinational sponsor can rely on local ethics approval as a substitute for its own audit, and whether a Turkish researcher's training is portable across borders.</p>
+        <p>Directive 2010/63/EU falls within accession Chapter 12 (Food Safety, Veterinary and Phytosanitary Policy), screened in 2006&ndash;2007 and opened for negotiation in 2010 <cite>(European Commission, 2007)</cite>. Accession negotiations have been effectively stalled since 2018, with no chapter opened or closed since; and yet legal and operational alignment with the Directive persists regardless, sustained by the commercial and institutional channels described below rather than by accession leverage.</p>
+        <p>The more immediate driver is commercial and institutional. Multinational sponsors conducting or outsourcing preclinical work expect data defensible under the standards their own regulators apply, regardless of where the work was performed; a Turkish facility working with such sponsors typically absorbs EU- or GLP-equivalent expectations contractually, not because domestic law requires it. International benchmarks reinforce this asymmetry unevenly. AAALAC International accreditation exists in Türkiye but appears limited: its own accreditation directory lists a single Turkish institution, the Acıbadem Mehmet Ali Aydınlar University Laboratory Animal Application and Research Center <cite>(AAALAC International, n.d., directory accessed August 26, 2026)</cite>. FELASA's own education and training guidance shows no systemic pathway linking HADYEK-issued competence certification to FELASA function categories; delivery in Türkiye has instead been ad hoc, exemplified by a 2013 joint course between Utrecht University and Dokuz Eylül University <cite>(FELASA, n.d., accessed August 26, 2026)</cite>. The result is a compliance landscape shaped less by statute than by which sponsors, accreditors, and export markets a given facility answers to. This is the argument the paper develops through Sections 3 to 7.</p>
+      </div>
+    </section>
+
+    <section class="chapter" id="s2">
+      <div class="chapter__head"><span class="chapter__num">02</span><h2 class="chapter__title">Scope and Definitions</h2></div>
+
+      <h3 class="sub"><span class="tag eu">EU</span> The EU Position</h3>
+      <div class="prose">
+        <p>Directive 2010/63/EU applies &ldquo;where animals are used or intended to be used in procedures, or bred specifically so that their organs or tissues may be used for scientific purposes&rdquo; <cite>(Directive 2010/63/EU, art 1(2))</cite>. The animals covered are defined narrowly but not exclusively by taxonomy: live non-human vertebrates, including independently feeding larval forms and foetal forms of mammals from the last third of their normal development, plus live cephalopods <cite>(art 1(3))</cite>. The inclusion of cephalopods (a taxon of invertebrates) was a deliberate extension beyond the Directive's predecessor and remains, at the level of primary EU legislation, unusual; no comparable extension to any other invertebrate taxon was made.</p>
+        <p>The Directive does not define its scope by species alone but by the procedure performed. A &ldquo;procedure&rdquo; is &ldquo;any use, invasive or non-invasive, of an animal for experimental or other scientific purposes, with known or unknown outcome, or educational purposes, which may cause the animal a level of pain, suffering, distress or lasting harm equivalent to, or higher than, that caused by the introduction of a needle in accordance with good veterinary practice&rdquo; <cite>(art 3(1))</cite>. This is a comparator standard, not a fixed severity floor: it draws the line between what is regulated at all and what falls outside the Directive entirely, prior to any severity classification under Article 15 (addressed in Section 4).</p>
+        <p>Article 1(5) excludes six categories from scope regardless of species: non-experimental agricultural practices; non-experimental clinical veterinary practices; veterinary clinical trials conducted for the marketing authorisation of a veterinary medicinal product; practices undertaken for recognised animal husbandry purposes; practices whose primary purpose is animal identification; and any practice that does not meet the needle-prick threshold above <cite>(art 1(5)(a)&ndash;(f))</cite>.</p>
+        <p>The killing-for-tissue case is handled by a specific carve-out rather than silence. Breeding an animal specifically so its organs or tissues can be used for scientific purposes brings that animal within the Directive's scope under Article 1(2), meaning breeding establishments, care standards, and record-keeping obligations apply. But the act of killing itself is expressly excluded from the definition of &ldquo;procedure&rdquo; <cite>(art 3(1), final clause)</cite>. Killing is nonetheless not unregulated: Article 6 requires that animals be killed with minimum pain, suffering and distress, in an authorised establishment, by a competent person, using a method appropriate to the species as set out in Annex IV <cite>(art 6(1)&ndash;(3))</cite>. The result is a two-track structure: killing-for-tissue escapes project authorisation and severity classification as a &ldquo;procedure,&rdquo; but does not escape the Directive's welfare and competence requirements entirely.</p>
+      </div>
+
+      <h3 class="sub"><span class="tag tr">TR</span> The Turkish Position</h3>
+      <div class="prose">
+        <p>The yönetmelik's scope and definitions provisions track Directive 2010/63/EU closely enough that they read as a direct transposition rather than an independent drafting effort. Madde 2(1)(c) brings within scope &ldquo;insan-dışı canlı omurgalılar&rdquo; (live non-human vertebrates), independently feeding larval forms, and mammalian foetuses that have passed the first two-thirds of gestation (i.e., are in the final third of normal development), together with live cephalopods, matching Directive art 1(3) point for point, cephalopod inclusion and developmental threshold both intact. Madde 2(1)(ç) extends scope to animals at an earlier developmental stage where the animal will be allowed to survive beyond that stage and is liable to suffer as a result after reaching it, the same construction as Directive art 1(4). Madde 2(1)(b) provides that the yönetmelik applies until an animal is killed, rehomed, released to its natural habitat, or returned to a livestock system, and that successful elimination of pain via anaesthesia, analgesia, or other methods does not remove the use from scope, again matching Directive art 1(2).</p>
+        <p>The definitional layer shows the same pattern. Madde 4(s) defines &ldquo;prosedür&rdquo; using language nearly identical to Directive art 3(1): an invasive or non-invasive use of an animal for experimental, other scientific, or educational purposes, with known or unknown outcome, capable of causing pain, suffering, distress, or lasting harm equivalent to or greater than that caused by inserting a needle under good veterinary practice. As in the EU text, it expressly excludes &ldquo;hayvanların yalnızca organları veya dokularını kullanmak için öldürülmesi&rdquo; (killing animals solely to use their organs or tissues). Madde 4(r) defines &ldquo;proje&rdquo; as a work programme containing one or more procedures with a specific scientific purpose, mirroring Directive art 3(2). The exclusions in madde 2(2), non-experimental agricultural and clinical veterinary practice, field trials for veterinary product licensing, obligations of registered livestock enterprises, animal-identification practices, and the needle-prick threshold itself, map onto all six categories in Directive art 1(5)(a)&ndash;(f).</p>
+        <p>Sitting above the yönetmelik, Law No. 5199 carries its own, older definitional layer, and it does not map onto the Directive as neatly. Kanun art 3(l) defines &ldquo;deney&rdquo; as the use of <em>any</em> animal (&ldquo;herhangi bir hayvanın&rdquo;) for experimental or other scientific purposes that will cause pain, suffering, distress or lasting harm (&ldquo;acı, eziyet, üzüntü veya uzun süreli hasara neden olacak&rdquo;), and art 3(m) defines &ldquo;deney hayvanı&rdquo; as any animal used or to be used in an experiment. Three differences from Directive art 3(1) follow from the text: the statutory definition has no taxonomic limit (the Kanun elsewhere defines wild animals to include invertebrates, art 3(h)), it has no needle-prick comparator, and it does not mention educational purposes or &ldquo;known or unknown outcome.&rdquo; The Directive-aligned scope (vertebrates, cephalopods, the developmental thresholds, the needle-prick line) exists only at yönetmelik level. The practical point is narrow but real: the Kanun's own requirements in art 9, scientific purpose only, use only where no other option exists, and ethics-committee authorisation, are written for &ldquo;hayvanlar&rdquo; without a species boundary, so their outer limit is set by the implementing regulation rather than by the statute.</p>
+        <p>The killing-for-tissue case is also handled partly in the Kanun rather than only in the yönetmelik. Art 8(2) prohibits removing or destroying all or part of a living animal's organs or tissues other than for medical purposes; art 14(1)(e) prohibits any non-therapeutic intervention on an animal's body before its death has been definitively confirmed; and art 13(4) makes the persons and bodies responsible for killing liable for confirming death and for proper disposal of the carcass, with killing and euthanasia methods delegated to a Ministry yönetmelik. Art 13(3) bars killing animals during birth, pregnancy and lactation, but expressly excepts &ldquo;tıbbî ve bilimsel gerekçeler&rdquo; (medical and scientific grounds). The art 8(2), art 14(1)(e) and art 13(4) rules each carry their own per-animal fine (art 28(d), (j), (ı) respectively), and for art 13(4) the fine rises from 2,200 to 5,500 TRY per animal where the breach is committed by an establishment (&ldquo;işletmelerce&rdquo;). The Turkish system therefore reproduces the EU's two-track structure, with killing outside the &ldquo;procedure&rdquo; definition but still regulated, and anchors part of the second track in primary legislation.</p>
+        <p>The practical implication is that scope and definitions are not where this comparison finds daylight. A hiring manager evaluating a Turkish facility's compliance posture should not expect ambiguity here: what counts as a regulated animal, a regulated procedure, or an excluded practice is essentially the same question with the same answer under both regimes. The divergence the thesis identifies, at authorisation, severity classification, and personnel competence, begins in Section 3.</p>
+        <p class="note">Reference-list note: full Resmî Gazete tarih/sayı for the yönetmelik still needed for the reference list.</p>
+      </div>
+    </section>
+
+    <section class="chapter" id="table1">
+      <div class="chapter__head"><h2 class="chapter__title">Table 1. Confirmed Divergences</h2></div>
+      <div class="prose">
+        <p>Rows are added only where a section's underlying text supports one; a section that found convergence rather than divergence is noted in prose instead. Section 2 produced no rows: scope and definitions (yönetmelik madde 2, madde 4) are a near-verbatim transposition of Directive 2010/63/EU art 1(1)&ndash;(5) and art 3(1)&ndash;(2). Confirmed matches there include cephalopod inclusion, the foetal/larval developmental threshold, the needle-prick procedure comparator, the killing-for-tissue carve-out, and all six art 1(5) exclusion categories. The one statutory-level nuance, that Kanun art 3(l) defines &ldquo;deney&rdquo; without a species limit or needle-prick threshold, is noted in Section 2 prose rather than tabled, because the yönetmelik closes the gap in practice.</p>
+        <p class="note"><span class="flag kanun">5199 checked</span>Rows marked this way were re-verified against the consolidated text of Law No. 5199 (mevzuat.gov.tr, as amended by Laws No. 5728, 5996, 7332 and 7527; retrieved September 28, 2026). Row 8 was added on that reading.</p>
+      </div>
+
+      <div class="table-wrap">
+        <table class="divergence">
+          <thead>
+            <tr>
+              <th>#</th><th>Topic</th><th>EU Position</th><th>Turkish Position</th><th>Practical Consequence</th><th>§</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="num">1</td>
+              <td class="topic">Locus of project-level decision authority</td>
+              <td class="eu-cell">Single designated &ldquo;competent authority&rdquo; per Member State; may delegate (art 59), but the Directive fixes evaluation criteria and timeline regardless of who holds the delegation.</td>
+              <td class="tr-cell"><span class="flag kanun">5199 checked</span>Split across at least three bodies: Komisyon (facility premises, madde 11), Bakanlık directly (off-site procedures, madde 19), yerel etik kurul/HADYEK (in-facility decisions, madde 17/22/23/26). The Kanun supplies the legal basis for two of the three: art 9(4) requires experiments to be authorised by ethics committees within the institution, and art 9(6) delegates the registration (tescil) of breeder, supplier and user establishments to a Tarım ve Orman Bakanlığı yönetmelik. HADYEK's composition/procedure is delegated by art 9(5), after consulting the Ministry of Health, to a further yönetmelik not located in this research.</td>
+              <td>A facility's compliance posture depends on which body is asked; HADYEK's operating rules are statutorily mandated but unverifiable from either instrument reviewed.</td>
+              <td class="cite">§3</td>
+            </tr>
+            <tr>
+              <td class="num">2</td>
+              <td class="topic">Harm-benefit evaluation criteria</td>
+              <td class="eu-cell">Mandatory, defined: severity, 3Rs compliance, harm-benefit justification (art 38(2)(d)), assessed by named-expertise reviewers (art 38(3)).</td>
+              <td class="tr-cell"><span class="flag pending">Pending</span><span class="flag kanun">5199 checked</span>Law No. 5199 art 9 sets three statutory tests: scientific purpose only (art 9(1)), use only &ldquo;in the absence of any other option&rdquo; (art 9(3)), and conduct that protects the animals, with proper care and housing (art 9(2)). It sets no severity, reduction or harm-benefit criterion and no reviewer-expertise requirement; the welfare yönetmelik specifies none either.</td>
+              <td>Project approval may turn on paperwork completeness rather than a documented harm-benefit judgment.</td>
+              <td class="cite">§3</td>
+            </tr>
+            <tr>
+              <td class="num">3</td>
+              <td class="topic">Statutory decision timeline</td>
+              <td class="eu-cell">Fixed: 40 working days, extendable once by 15 (art 41).</td>
+              <td class="tr-cell"><span class="flag pending">Pending</span><span class="flag kanun">5199 checked</span>No timeline anywhere in Law No. 5199 or in the welfare yönetmelik provisions reviewed. Art 9(5) delegates HADYEK's &ldquo;çalışma usul ve esasları&rdquo; (working procedures), the instrument where a decision clock would sit.</td>
+              <td>No enforceable expectation of turnaround time for applicants.</td>
+              <td class="cite">§3</td>
+            </tr>
+            <tr>
+              <td class="num">4</td>
+              <td class="topic">Severe/unrelievable-pain exception</td>
+              <td class="eu-cell">State-level only: art 15(2) prohibits it; an exception requires a Member State &ldquo;provisional measure&rdquo; (art 55(3)), with immediate notification to the Commission and all other Member States.</td>
+              <td class="tr-cell">Institution-level: madde 22(3) lets any individual yerel etik kurul grant this exception case-by-case, on documented scientific grounds, with no notification mechanism found.</td>
+              <td>An internationally visible, state-level decision in the EU is a local committee's discretionary call in Türkiye &mdash; an accountability-structure divergence.</td>
+              <td class="cite">§4</td>
+            </tr>
+            <tr>
+              <td class="num">5</td>
+              <td class="topic">Facility-manager competence pathway</td>
+              <td class="eu-cell">No tenure-based exemption: competence for all four functions is demonstrated/published-standard based (art 23, Annex V) regardless of years served.</td>
+              <td class="tr-cell">Dual pathway: 2+ years' pre-2013 experience <em>or</em> Ek-10 training completion (madde 32(4)) &mdash; tenure alone can substitute for demonstrated-standard training.</td>
+              <td>A facility manager may hold the role on grandfathered experience, with no verified equivalence to Annex-V-based competence.</td>
+              <td class="cite">§5</td>
+            </tr>
+            <tr>
+              <td class="num">6</td>
+              <td class="topic">Statutory inspection-frequency floor</td>
+              <td class="eu-cell">Explicit and numerical: at least one-third of users inspected annually, non-human-primate facilities at least yearly, an &ldquo;appropriate proportion&rdquo; unannounced (art 34).</td>
+              <td class="tr-cell"><span class="flag pending">None located</span><span class="flag kanun">5199 checked</span>Law No. 5199 art 17(1) vests inspection authority in the Bakanlık, delegable to the highest local civil administrator. Art 17(2) delegates inspector qualifications, inspection procedure, a registration-and-monitoring system and notification duties to a further, unlocated yönetmelik. Frequency is not mentioned even as a delegated matter.</td>
+              <td>No verified floor on how often a Turkish facility is actually inspected; the statute does not even name frequency as something the implementing rule must address.</td>
+              <td class="cite">§6</td>
+            </tr>
+            <tr>
+              <td class="num">7</td>
+              <td class="topic">Penalty structure</td>
+              <td class="eu-cell">Qualitative sufficiency standard: penalties must be &ldquo;effective, proportionate and dissuasive&rdquo; (art 60), Commission-notified; scales by Member State design.</td>
+              <td class="tr-cell"><span class="flag kanun">5199 checked</span>Itemized per-animal fine under Law No. 5199 art 28(e), covering art 9 <em>and</em> its implementing yönetmelikler: 1,200 TRY/animal general non-compliance, 4,500 TRY/animal unauthorized experimentation (2021 base, likely revalued since). Escalators exist but are narrow: fines are doubled when the offender is a veterinarian, veterinary health technician or person tasked with animal care (art 28, penultimate para.), and increased one-fold on repetition and three-fold on further repetition (art 30). Art 24 also allows a ban on keeping animals and confiscation. Administrative only: art 28/A's imprisonment provisions contain no experimental-animal offence.</td>
+              <td>The fine scales with animal count, repetition and the offender's professional status, but never with facility size or resources; for an internationally-linked facility, still a materially smaller deterrent than losing AAALAC accreditation.</td>
+              <td class="cite">§6</td>
+            </tr>
+            <tr>
+              <td class="num">8</td>
+              <td class="topic">Reporting and transparency</td>
+              <td class="eu-cell">Public-facing duties: non-technical project summaries published (art 43); Member States collect and publish annual statistics on animal use (art 54(2)); Commission reports to Parliament and Council (art 57).</td>
+              <td class="tr-cell"><span class="flag pending">Pending</span><span class="flag kanun">5199 checked</span>Law No. 5199 mandates the infrastructure but not the publication: art 9(6) delegates the records establishments must keep, and art 17(2) delegates a registration-and-monitoring system and notification duties, both to unlocated or unreviewed yönetmelikler. No statutory duty to publish statistics or project summaries.</td>
+              <td>Data on animal use may exist inside the Ministry but there is no statutory right of outside scrutiny; sector-level benchmarking of a Turkish facility is not possible from public sources the Kanun requires.</td>
+              <td class="cite">§6</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="chapter" id="s3">
+      <div class="chapter__head"><span class="chapter__num">03</span><h2 class="chapter__title">Authorisation and Project Evaluation</h2></div>
+
+      <h3 class="sub"><span class="tag eu">EU</span> The EU Position</h3>
+      <div class="prose">
+        <p>Directive 2010/63/EU separates establishment authorisation from project authorisation, and treats both as the responsibility of a &ldquo;competent authority&rdquo; that each Member State must designate, with discretion to delegate specific tasks, including project authorisation itself, to other bodies <cite>(art 59)</cite>. What does not travel with that delegation, however, is the substance of the evaluation: Article 36 provides that no project may be carried out without a favourable project evaluation, and Article 38 fixes what that evaluation must weigh: the project's objectives, the severity of procedures involved, and, centrally, a harm-benefit analysis assessing &ldquo;whether the harm to the animals in terms of suffering, pain and distress is justified by the expected outcome&hellip; taking into account ethical considerations&rdquo; <cite>(art 38(2)(d))</cite>. Article 38(3) further requires that the evaluation draw on expertise in the scientific field of use, experimental design, the veterinary care of the relevant species, and animal husbandry. The decision itself is time-bound: Article 41 requires that applicants be notified within 40 working days of a complete application, extendable once by up to 15 working days where the project's complexity or multidisciplinary character justifies it.</p>
+        <p>Feeding into this decision, but structurally separate from it, is the animal-welfare body every breeder, supplier, and user establishment must set up under Article 26, which must comprise at minimum the person(s) responsible for animal welfare and care and, for users, a scientific member, with input from the establishment's designated veterinarian. Its Article 27 tasks are advisory: guidance to staff on welfare, acquisition, and 3Rs application. It does not authorise projects; it feeds the establishment's own practice and, indirectly, the information available to whichever body performs the Article 38 evaluation.</p>
+      </div>
+
+      <h3 class="sub"><span class="tag tr">TR</span> The Turkish Position</h3>
+      <div class="prose">
+        <p>The yönetmelik's authorisation architecture is visibly split across at least three actors, each with a distinct and non-overlapping remit. Facility-level licensing runs through the Komisyon (two uzman veteriner hekim from the Ministry's provincial veterinary institute), which inspects premises and issues the kuruluş izni (one-year establishment permit) and, following a further inspection, the çalışma izni (ten-year operating permit) <cite>(madde 11&ndash;12)</cite>. Procedures conducted outside a licensed user establishment require separate, direct Ministry permission, obtained by the project's proje yöneticisi submitting a project summary, together with the number and species of animals and the location where the procedure will occur <cite>(madde 19)</cite>. Procedures conducted within a licensed user establishment, by contrast, fall under the case-by-case authority of the yerel etik kurul (HADYEK): it can override the default severity ceiling for procedures involving prolonged, unrelievable severe pain <cite>(madde 22(2)&ndash;(3))</cite>; authorise the reuse of previously used animals under defined conditions <cite>(madde 23(2))</cite>; grant exceptions permitting the sourcing of wild-caught animals <cite>(madde 17(2))</cite>; and, under madde 26(5), holds the operative authority over how the alternative-method, reduction, and refinement principle is applied at the procedure level, though not over breeding, husbandry, or housing questions, which the article reserves elsewhere.</p>
+        <p>Structurally, the closest Turkish parallel to the EU's Article 26 animal-welfare body is the hayvan refahı birimi that every producer, supplier, user, and research-authorised institution must establish <cite>(madde 8)</cite>. Its composition mirrors the EU model closely: at least one veteriner hekim, veteriner sağlık teknikeri, or veteriner sağlık teknisyeni responsible for welfare and care, plus, in user establishments, a member who is also a yerel etik kurul üyesi <cite>(madde 8(2))</cite>. Its tasks <cite>(madde 9)</cite> are advisory in the same register as Article 27: staff guidance on welfare, on 3Rs application, and on monitoring project outcomes for their effects on animals.</p>
+        <p>HADYEK's own legal basis sits a level above the welfare yönetmelik, in primary legislation. Article 9 of Law No. 5199 (Hayvanları Koruma Kanunu, 2004) provides that institutions conducting animal experiments may do so only &ldquo;through ethics committees established within their own body&rdquo; (&ldquo;kendi bünyelerinde kurulmuş ve kurulacak etik kurullar yoluyla&rdquo;), confirming HADYEK as an institution-level body created by statute, not by the welfare yönetmelik. The same article, in its next paragraph, delegates HADYEK's composition and operating procedure to a further yönetmelik: &ldquo;Etik kurulların kuruluşu, çalışma usul ve esasları&hellip; Bakanlıkça çıkarılacak yönetmelikle belirlenir&rdquo; <cite>(Law No. 5199, art 9)</cite>. The same paragraph requires the Ministry to consult the Ministry of Health and other relevant bodies before issuing it. This is a separate instrument from the one examined in this section and has not been located in the course of this research.</p>
+        <p>The welfare yönetmelik's own authority also traces to art 9, in its final paragraph: the breeding, feeding, housing and care of experimental animals; the registration (tescil) of breeder, supplier and user establishments; the qualifications of staff; the records to be kept; which species may be bred; and the rules those establishments must follow are all to be set by a Ministry yönetmelik <cite>(Law No. 5199, art 9(6))</cite>. &ldquo;Bakanlık&rdquo; throughout is the Tarım ve Orman Bakanlığı <cite>(art 3(o))</cite>. The Komisyon's licensing role in madde 11&ndash;12 is therefore the implementation of a statutory registration mandate, not a free-standing regulatory choice. One Kanun-level control sits outside this structure altogether: the import and export of experimental animals requires a Ministry permit <cite>(art 10(7))</cite>, a requirement with no counterpart in Directive 2010/63/EU, which leaves cross-border movement to EU animal-health law.</p>
+        <p>What this leaves open is precisely what Article 9 delegates but does not itself supply: HADYEK's membership and quorum. The load-bearing question for a hiring manager assessing a facility's authorisation posture is whether HADYEK's project evaluation carries anything equivalent to Article 38's harm-benefit analysis or Article 41's statutory decision clock. Law No. 5199 art 9 does establish substantive tests directly, at statutory level. Animals may not be used in non-scientific diagnosis, treatment or experiments <cite>(art 9(1))</cite>. Experiments must be carried out in a way that protects the animals, and the animals must be properly cared for and housed <cite>(art 9(2))</cite>. Experimental use is permitted only &ldquo;in the absence of any other option&rdquo; (&ldquo;başkaca bir seçenek olmaması halinde&rdquo;) <cite>(art 9(3))</cite>, a replacement-principle statement embedded in primary legislation rather than in implementing regulation, which is a structurally different legislative placement from the EU's Article 4 (addressed in Section 4). These are threshold conditions, not an evaluation method: art 9 says nothing about severity, reduction, a harm-benefit weighing, the expertise reviewers must bring, or a timeline, and neither does the welfare yönetmelik. Whether Türkiye's project-evaluation stage matches Article 38's substance or is closer to a procedural check remains unverified pending the ethics-committee yönetmelik itself.</p>
+      </div>
+    </section>
+
+    <section class="chapter" id="s4">
+      <div class="chapter__head"><span class="chapter__num">04</span><h2 class="chapter__title">Severity Classification and the 3Rs: Binding or Aspirational?</h2></div>
+      <div class="prose">
+        <p>Textually, the two regimes are close to identical. Directive art 4(1)&ndash;(3) states replacement, reduction, and refinement as binding obligations on Member States; the yönetmelik's madde 26 mirrors the same three-part structure, and Kanun art 9 independently states two of the three at the level of primary legislation: replacement, &ldquo;in the absence of any other option&rdquo; <cite>(art 9(3))</cite>, and a general refinement-type duty to conduct experiments protectively and to care for and house the animals appropriately <cite>(art 9(2))</cite>. Reduction has no statutory anchor and exists only in the yönetmelik. This is a placement the Directive's own 3Rs principle does not have (art 4 sits in secondary EU law, transposed into national implementing rules). Severity classification shows the same convergence: Directive art 15 requires every procedure classified case-by-case as non-recovery, mild, moderate, or severe using Annex VIII criteria; madde 22 requires the identical four-tier classification (düzelmez/hafif/orta/şiddetli) using Ek-8 criteria. Method-choice and anaesthesia obligations (madde 20&ndash;21) track Directive arts 13&ndash;14 comparably closely.</p>
+        <p>One genuine divergence survives this convergence, and it is institutional rather than definitional. Directive art 15(2) prohibits procedures involving severe, long-lasting, unrelievable pain outright; an exception requires a Member State to invoke the art 55(3) safeguard clause: a &ldquo;provisional measure&rdquo; the state must adopt and immediately report to the European Commission and every other Member State. Madde 22(3) permits the same exception, but grants the power to <em>any individual yerel etik kurul</em>, case-by-case, on documented scientific grounds, with no notification mechanism located in this research. The EU treats this decision as significant enough to require international visibility; Türkiye treats it as a local committee's discretionary call.</p>
+        <p>Beyond that specific divergence, the honest conclusion is that statutory text does not distinguish these regimes at this layer: both bind on paper. Whether the classification and 3Rs obligations are <em>applied</em> with comparable rigor is an enforcement-capacity question, not a drafting one, and it is addressed with the relevant evidence in Section 6.</p>
+      </div>
+    </section>
+
+    <section class="chapter" id="s5">
+      <div class="chapter__head"><span class="chapter__num">05</span><h2 class="chapter__title">Personnel Competence: Article 23 and Its Turkish Mirror</h2></div>
+      <div class="prose">
+        <p>The convergence pattern from Sections 2 and 4 repeats here. Directive art 23 requires adequate education and training before performing any of four functions: carrying out procedures, designing procedures and projects, caring for animals, and killing animals; designers must additionally hold discipline-relevant training and species-specific knowledge, and staff in the other three functions work under supervision until competence is demonstrated <cite>(art 23(1)&ndash;(2))</cite>. Madde 32 reproduces this exact four-function structure (prosedür uygulamak, prosedür/proje tasarlamak, hayvanlara bakmak, hayvanları öldürmek) with the same designer-specific and supervision-until-competent rules <cite>(madde 32(2)&ndash;(3))</cite>. Article 23(3) requires Member States to publish minimum training requirements against Annex V; madde 32(4) points to an Ek-10 (Annex 10) as its training-content basis, suggesting a structurally parallel mechanism, though this paper has not verified Ek-10's substantive content against Annex V.</p>
+        <p>One divergence is textually clear rather than merely unverified: Article 23 ties competence entirely to demonstrated, published-standard training, with no tenure-based substitute. Madde 32(4) creates a dual pathway for the sorumlu yönetici (facility manager) role specifically: two or more years' pre-2013 experience in deney hayvanları <em>or</em> Ek-10 training completion satisfies the requirement, meaning tenure predating the current training framework can stand in for it. Whether Ek-10's content is FELASA-equivalent in rigor is one of the open questions in Section 8; that a tenure-based exemption exists at all is established by the text itself.</p>
+        <p>The Kanun adds two points the yönetmelik alone does not show. First, madde 32's competence regime has a statutory anchor: art 9(6) expressly delegates &ldquo;çalışan personelin nitelikleri&rdquo; (the qualifications of staff) to Ministry regulation, and personnel status has penalty consequences, since art 28 doubles any administrative fine where the offender is a veterinarian, veterinary health technician, or a person tasked with caring for or protecting animals, a category that on its face covers animal-care staff in a user establishment. Second, art 7(1) provides, without qualification, that medical and surgical interventions on animals are carried out only by veterinarians (&ldquo;sadece veteriner hekimler tarafından yapılır&rdquo;), and art 28(c) attaches a per-animal fine to breaches. Directive art 23 has no equivalent: surgical procedures may be performed by any person whose competence has been demonstrated. Whether art 7 reaches surgical procedures performed by non-veterinarian researchers under an ethics-committee-approved project, or whether art 9 and the welfare yönetmelik operate as the specific rule for experiments, is not answered by the Kanun's text and is carried to Section 8.</p>
+      </div>
+    </section>
+
+    <section class="chapter" id="s6">
+      <div class="chapter__head"><span class="chapter__num">06</span><h2 class="chapter__title">Inspection, Enforcement, and Reporting Obligations</h2></div>
+      <div class="prose">
+        <p>This is where Section 4's enforcement-gap claim gets tested against text, and it holds up. Directive art 34 fixes a numerical inspection floor: at least one-third of user establishments inspected annually, non-human-primate facilities at least once a year, with an &ldquo;appropriate proportion&rdquo; unannounced. Law No. 5199 art 17(1) vests inspection authority in the Bakanlık, delegable to the highest local civil administrator (&ldquo;mahallin en büyük mülkî amiri&rdquo;), and art 25 gives that same authority the power to impose administrative fines. Art 17(2) then delegates inspector qualifications, inspection procedure (&ldquo;denetime ilişkin usul ve esaslar&rdquo;), a registration-and-monitoring system, and notification duties to a further yönetmelik not located in this research. Frequency is not mentioned at all, not even as a matter the implementing rule must address. Whatever that instrument specifies, its absence from the primary statute means Türkiye's inspection floor, if one exists, is not verifiable from the Kanun itself.</p>
+        <p>The penalty structure sharpens the picture. Directive art 60 requires penalties to be &ldquo;effective, proportionate and dissuasive,&rdquo; a qualitative standard Member States implement and notify to the Commission, deliberately left open to scale with the violation and the violator. Law No. 5199 art 28(e) instead sets an itemized, per-animal administrative fine for failing to comply with art 9 &ldquo;and the yönetmelikler to be issued under it,&rdquo; which brings breaches of the welfare yönetmelik itself within the fine: 1,200 TRY per animal for general non-compliance, 4,500 TRY per animal for conducting experiments without authorization (2021-amended base figures; Turkish administrative fines are typically revalued annually by statute, so the current amount is almost certainly higher, though this paper has not verified the current figure). Two features of this schedule matter more than the exact number. First, it scales along the wrong axis for deterrence. The Kanun does include escalators: the fine is multiplied by the number of animals; it is doubled where the offender is a veterinarian, veterinary health technician, or a person tasked with animal care <cite>(art 28, penultimate para.)</cite>; and it rises one-fold on a repeated offence and three-fold on further repetition <cite>(art 30)</cite>. Art 24 adds a non-monetary sanction, a ban on keeping animals and confiscation, for anyone who breaches the Kanun's protective provisions. None of these tracks the violator's resources, so the same schedule applies to a small academic lab and a facility running multinational-sponsored preclinical work. Second, it is exclusively administrative. Law No. 5199 art 28/A, which creates criminal, custodial penalties, covers killing an endangered animal or destroying a species' lineage, intentionally killing or torturing an ev hayvanı or evcil hayvan, sexual assault on animals, and animal fighting. None of its offences is framed around experimental use, and prosecution under it requires a written application from the Ministry's provincial or district directorate. Experimental-animal violations therefore remain, in ordinary reading, a kabahat (administrative infraction), not a suç (crime). One interpretive edge is left open: art 28/A(2) carries no scientific-use carve-out, and whether a purpose-bred laboratory animal could ever count as an &ldquo;evcil hayvan&rdquo; (defined in art 3(e) as an animal &ldquo;cultured <em>and trained</em>&rdquo; by humans) is unaddressed. The &ldquo;trained&rdquo; element makes that unlikely for most laboratory species.</p>
+        <p>Two further enforcement gaps are visible only in the Kanun. The import and export permit for experimental animals <cite>(art 10(7))</cite> has no matching fine: art 28(f) sanctions the first, fourth, fifth, sixth and eighth paragraphs of art 10, but not the seventh. On reporting, the section heading's third term, the Directive requires public-facing transparency: published non-technical project summaries <cite>(art 43)</cite>, annually published national statistics <cite>(art 54(2))</cite>, and Commission reporting <cite>(art 57)</cite>. The Kanun provides the infrastructure for records, through art 9(6) (records establishments must keep) and art 17(2) (a registration-and-monitoring system and notification duties), but imposes no duty to publish anything. Whether the implementing yönetmelikler do is unverified; at statutory level, reporting runs inward to the Ministry, not outward to the public (Table 1, row 8).</p>
+        <p>This closes the loop opened in Section 1. A fixed, non-scaling administrative fine is a materially weaker deterrent for an internationally-linked facility than the loss of AAALAC accreditation or a sponsor's contract. This is precisely why compliance in that context tracks accreditation and sponsor pressure rather than the statutory penalty regime.</p>
+      </div>
+    </section>
+
+    <section class="chapter" id="s7">
+      <div class="chapter__head"><span class="chapter__num">07</span><h2 class="chapter__title">Where Turkish Law Diverges, and the Practical Consequence</h2></div>
+      <div class="prose">
+        <p>A reader who compares only the substantive standards (which animals and procedures are covered, what the 3Rs principle requires, how severity is classified, what functions demand trained personnel) will find the yönetmelik reads as a faithful transposition of Directive 2010/63/EU, article for madde, in most places. That similarity is real, but it is also where the risk lies for anyone doing due diligence on a Turkish facility: the statutory text invites a confidence the institutional layer doesn't support.</p>
+        <p>The divergences this paper could verify cluster at three points, all downstream of the text itself. First, decision authority is fragmented and partly undocumented: project-level ethical review runs through HADYEK, a body whose statutory existence (Law No. 5199, art 9) is confirmed but whose evaluation criteria, quorum, and decision timeline sit in an instrument this research could not locate. Second, the one clear textual divergence is institutional: the severe-pain exception is an institution-level HADYEK call in Türkiye, versus a Member-State safeguard clause requiring Commission notification in the EU. This moves a high-stakes decision from an internationally visible register to a local, undocumented one. Third, enforcement is verifiably weaker on the specific dimension that matters for deterrence: no located inspection-frequency floor (the Kanun does not even name frequency as a delegated matter), a per-animal administrative fine whose escalators track repetition and professional status but never a facility's size or sponsor relationships, and no statutory duty to publish the records the Ministry is empowered to collect.</p>
+        <p>The practical consequence for a hiring manager or compliance officer: reading the yönetmelik tells you what a facility is supposed to do, not what it actually does. The Directive's authority chain is auditable end to end: competent authority, evaluation criteria, inspection floor, penalty standard, public statistics, all in the same instrument or its designated delegate. Türkiye's chain has the same shape but breaks at exactly the points an auditor would need to check. That gap is filled, in practice, by the channels Section 1 identified (AAALAC accreditation status, sponsor audit history, and a facility's own track record) rather than by the statute. Due diligence on a Turkish facility therefore cannot stop at the regulatory text; it has to reach the facility-specific evidence the text itself doesn't produce.</p>
+      </div>
+    </section>
+
+    <section class="chapter" id="s8">
+      <div class="chapter__head"><span class="chapter__num">08</span><h2 class="chapter__title">Open Questions and Direction of Travel</h2></div>
+      <div class="prose">
+        <p>Three documents this paper needed were not located and remain open: the yönetmelik governing HADYEK's own composition and procedure (delegated by Law No. 5199 art 9); the yönetmelik governing inspection frequency and procedure (delegated by art 17); and Ek-10's actual training content, needed to assess whether it is substantively equivalent to Directive Annex V or FELASA-recognized frameworks. Locating and reviewing these would resolve the paper's remaining pending rows and either confirm or complicate the enforcement-gap argument in Sections 4 and 6. The Kanun indicates they should exist: Transitional Art 2 required every yönetmelik the Law calls for to be prepared within one year of its entry into force in July 2004, and the 2021 amendments (Law No. 7332) set a six-month deadline for regulations under the amended text <cite>(Law No. 5199, geçici madde 2; geçici madde 3, last para.)</cite>. Their absence from this paper is therefore a sourcing gap to close, not a legislative vacuum.</p>
+        <p>The full-text reading of Law No. 5199 adds two interpretive questions that only practice or case law can settle. First, whether the veterinarian-only rule for medical and surgical interventions <cite>(art 7(1))</cite> constrains who may perform surgical procedures in an approved project, which would be a substantial divergence from Directive art 23 in the opposite direction, stricter rather than looser. Second, whether any experimental-animal conduct could fall within the criminal offences of art 28/A, which contain no scientific-use exception. A due-diligence review of a Turkish facility should ask how its HADYEK and its legal counsel read both.</p>
+        <p>The direction-of-travel question is harder to answer than it first appears. Accession negotiations have been stalled since 2018, yet the welfare yönetmelik, dated to the more active 2011&ndash;2014 negotiating period, remains a close textual match to the Directive at nearly every layer this paper could check, including recent EU-side detail like the cephalopod-inclusion and needle-prick thresholds. Whether that reflects ongoing technical alignment independent of accession politics, or a high-water mark frozen at the moment negotiations stalled and not revisited since, is itself unverified: the Directive has been amended since 2014 (Annex IV's killing-methods update in 2024, for instance), and whether Türkiye's implementing text tracks such amendments is a live question this research did not resolve. For a facility weighing long-term compliance investment, that uncertainty, not the current text, may be the more consequential unknown.</p>
+      </div>
+    </section>
+
+    <section class="chapter" id="refs">
+      <div class="chapter__head"><h2 class="chapter__title">References</h2></div>
+      <div class="refs">
+        <div class="ref">AAALAC International. (n.d.). <em>Directory of accredited organizations</em>. Retrieved August 26, 2026, from <a href="https://www.aaalac.org/accreditation/directory/directory-of-accredited-organizations-search-result/">aaalac.org/accreditation/directory</a></div>
+        <div class="ref">Deneysel ve Diğer Bilimsel Amaçlar İçin Kullanılan Hayvanların Refah ve Korunmasına Dair Yönetmelik [Regulation on the Welfare and Protection of Animals Used for Experimental and Other Scientific Purposes]. (n.d.). T.C. Resmî Gazete.<span class="pending-note">Full tarih/sayı still needed.</span></div>
+        <div class="ref">Directive 2010/63/EU of the European Parliament and of the Council of 22 September 2010 on the protection of animals used for scientific purposes. (2010). <em>Official Journal of the European Union</em>, L 276, 33&ndash;79.</div>
+        <div class="ref">European Commission, Directorate-General for Neighbourhood and Enlargement Negotiations. (2007). <em>Screening report Turkey: Chapter 12 &ndash; Food safety, veterinary and phytosanitary policy</em>. <a href="https://enlargement.ec.europa.eu/screening-report-turkey-chapter-12-food-safety-veterinary-and-phytosanitary-policy_en">enlargement.ec.europa.eu</a></div>
+        <div class="ref">FELASA. (n.d.). <em>Education &amp; training</em>. Retrieved August 26, 2026, from <a href="https://felasa.eu/education-training">felasa.eu/education-training</a></div>
+        <div class="ref">Hayvanları Koruma Kanunu [Animal Protection Law], Law No. 5199 (2004). T.C. Resmî Gazete, July 1, 2004, No. 25509; as amended by Laws No. 5728 (2008), 5996 (2010), 7332 (2021) and 7527 (2024). Consolidated text retrieved September 28, 2026, from <a href="https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=5199&amp;MevzuatTur=1&amp;MevzuatTertip=5">mevzuat.gov.tr</a></div>
+        <div class="ref">Republic of Türkiye Ministry for EU Affairs. (n.d.). <em>Chapter 12: Food safety, veterinary and phytosanitary policy</em>. <a href="https://www.ab.gov.tr/chapter-12-food-safety-veterinary-and-phytosanitary-policy_77_en.html">ab.gov.tr</a></div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="colophon">
+    <span>Two Gazettes &mdash; comparative regulatory analysis</span>
+    <span>Draft for review &middot; Law No. 5199 verified in full text &middot; three delegated instruments unlocated (§8)</span>
+  </footer>
+
+</div>
+
