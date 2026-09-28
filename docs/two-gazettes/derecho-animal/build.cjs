@@ -142,7 +142,12 @@ const blocks = src.split(/\n\s*\n/).map((b) => b.trim()).filter(Boolean);
 const children = [];
 for (const b of blocks) {
   if (b.startsWith('#TITLE ')) {
-    children.push(new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 360, line: 240 }, children: [new TextRun({ text: b.slice(7), bold: true, size: TITLE, font: FONT })] }));
+    const tpd = JSON.parse(fs.readFileSync(path.join(dir, 'titlepage.json'), 'utf8'));
+    const lab = (l, v) => new Paragraph({ alignment: AlignmentType.JUSTIFIED, spacing: { line: 240, after: 160 }, children: [new TextRun({ text: l + ' ', bold: true, size: BODY, font: FONT }), new TextRun({ text: v, size: BODY, font: FONT })] });
+    children.push(new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 200, line: 240 }, children: [new TextRun({ text: b.slice(7), bold: true, size: TITLE, font: FONT })] }));
+    children.push(new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 360, line: 240 }, children: [new TextRun({ text: tpd.title_es, size: 28, font: FONT })] }));
+    children.push(lab('Abstract:', tpd.abstract_en), lab('Keywords:', tpd.keywords_en), lab('Resumen:', tpd.abstract_es), lab('Palabras clave:', tpd.keywords_es));
+    children.push(new Paragraph({ spacing: { after: 200 }, border: { bottom: { style: BorderStyle.SINGLE, size: 6, color: '808080', space: 1 } }, children: [] }));
   } else if (b.startsWith('#SUMMARY ')) {
     const t = b.slice(9);
     const i = t.indexOf(':');
@@ -162,8 +167,8 @@ const section = (kids) => ({
 });
 const styles = { default: { document: { run: { font: FONT, size: BODY } } } };
 
-const manuscript = new Document({ styles, footnotes, sections: [section(children)] });
-Packer.toBuffer(manuscript).then((buf) => fs.writeFileSync(path.join(dir, 'manuscript-anonymised.docx'), buf));
+const manuscript = new Document({ creator: 'Anonymous', lastModifiedBy: 'Anonymous', title: 'Faithful on Paper, Unobservable in Practice', styles, footnotes, sections: [section(children)] });
+Packer.toBuffer(manuscript).then((buf) => fs.writeFileSync(path.join(dir, '1-UPLOAD-manuscript-for-review.docx'), buf));
 
 // ---------- title page (portadilla) ----------
 const tp = JSON.parse(fs.readFileSync(path.join(dir, 'titlepage.json'), 'utf8'));
@@ -181,5 +186,5 @@ const tpKids = [
   label('Palabras clave:', tp.keywords_es),
   label('Keywords:', tp.keywords_en),
 ];
-const titlePage = new Document({ styles, sections: [section(tpKids)] });
-Packer.toBuffer(titlePage).then((buf) => fs.writeFileSync(path.join(dir, 'title-page-portadilla.docx'), buf));
+const titlePage = new Document({ creator: 'Anonymous', lastModifiedBy: 'Anonymous', styles, sections: [section(tpKids)] });
+Packer.toBuffer(titlePage).then((buf) => fs.writeFileSync(path.join(dir, '2-UPLOAD-title-page-portadilla.docx'), buf));
